@@ -2,42 +2,42 @@
 
 #include <utility>
 #include "pointer/GcPtr.h"
-#include "gc/Gc.h"
-#include "gc/GcCollected.h"
+#include "gc/collector/MarkAndSweepCollector.h"
+#include "gc/GCCollected.h"
 
-struct Point : public tgc::GcCollected {
+struct Point : public gccpp::GCCollected {
 public:
     Point(int _x, int _y) : x(_x), y(_y) {}
 
-    void trace(tgc::GCOperation *visitor) noexcept override {}
+    void trace(gccpp::GCOperation *visitor) noexcept override {}
 public:
     int x;
     int y;
 };
 
-struct Line : public tgc::GcCollected {
+struct Line : public gccpp::GCCollected {
 public:
-    Line(tgc::GcPtr<Point> _a, tgc::GcPtr<Point> _b) :
+    Line(gccpp::GcPtr<Point> _a, gccpp::GcPtr<Point> _b) :
             a(std::move(_a)), b(std::move(_b)) {}
 
-    void trace(tgc::GCOperation *visitor) noexcept override {
+    void trace(gccpp::GCOperation *visitor) noexcept override {
         visitor->trace(a);
         visitor->trace(b);
     }
 
 public:
-    tgc::GcPtr<Point> a;
-    tgc::GcPtr<Point> b;
+    gccpp::GcPtr<Point> a;
+    gccpp::GcPtr<Point> b;
 };
 
-struct List: public tgc::GcCollected {
+struct List: public gccpp::GCCollected {
 public:
-    List(int _data, tgc::GcPtr<List> _next) :
+    List(int _data, gccpp::GcPtr<List> _next) :
         data(_data), next(std::move(_next)) {}
 
-    void trace(tgc::GCOperation* visitor) noexcept override {
-        tgc::GcPtr<List> begin = tgc::GcPtr<List>::from<List>(this);
-        tgc::GcPtr<List> current = begin;
+    void trace(gccpp::GCOperation* visitor) noexcept override {
+        gccpp::GcPtr<List> begin = gccpp::GcPtr<List>::from<List>(this);
+        gccpp::GcPtr<List> current = begin;
 
         while (current != nullptr) {
             visitor->trace(current);
@@ -49,11 +49,11 @@ public:
     }
 public:
     int data;
-    tgc::GcPtr<List> next;
+    gccpp::GcPtr<List> next;
 };
 
-tgc::GcPtr<Line> createLine(tgc::Gc &gc) {
-    tgc::Frame fr = gc.enter();
+gccpp::GcPtr<Line> createLine(gccpp::MarkAndSweepCollector &gc) {
+    gccpp::Frame fr = gc.enter();
 
     auto point1 = gc.gc_alloc<Point>(2, 3);
     auto point2 = gc.gc_alloc<Point>(20, 30);
@@ -62,22 +62,22 @@ tgc::GcPtr<Line> createLine(tgc::Gc &gc) {
 }
 
 TEST(gc_test1, creation) {
-    tgc::Gc gc;
-    tgc::Frame fr = gc.enter();
-    gc.safepoint();
+    gccpp::MarkAndSweepCollector gc;
+    gccpp::Frame fr = gc.enter();
+    gc.safepoint_at_poll();
 
     auto root = gc.gc_alloc<Point>(2, 3);
 
     ASSERT_EQ(root->x, 2);
     ASSERT_EQ(root->y, 3);
 
-    gc.safepoint();
+    gc.safepoint_at_poll();
 }
 
 TEST(gc_test_nullptr, creation) {
-    tgc::Gc gc;
-    tgc::Frame fr = gc.enter();
-    gc.safepoint();
+    gccpp::MarkAndSweepCollector gc;
+    gccpp::Frame fr = gc.enter();
+    gc.safepoint_at_poll();
 
     auto point1 = gc.gc_alloc<Point>(2, 3);
     auto point2 = gc.gc_alloc<Point>(20, 30);
@@ -88,7 +88,7 @@ TEST(gc_test_nullptr, creation) {
 
     root->a = nullptr;
     ASSERT_EQ(root->a, nullptr);
-    gc.safepoint();
+    gc.safepoint_at_poll();
     ASSERT_EQ(root->a, nullptr);
 
     ASSERT_EQ(point1->x, 2);
@@ -97,13 +97,13 @@ TEST(gc_test_nullptr, creation) {
     ASSERT_EQ(point2->x, 20);
     ASSERT_EQ(point2->y, 30);
 
-    gc.safepoint();
+    gc.safepoint_at_poll();
 }
 
 TEST(gc_test_nullptr, reset) {
-    tgc::Gc gc;
-    tgc::Frame fr = gc.enter();
-    gc.safepoint();
+    gccpp::MarkAndSweepCollector gc;
+    gccpp::Frame fr = gc.enter();
+    gc.safepoint_at_poll();
 
     auto line = gc.gc_alloc<Line>(nullptr, nullptr);
 
@@ -111,7 +111,7 @@ TEST(gc_test_nullptr, reset) {
     ASSERT_EQ(line->b, nullptr);
 
     {
-        tgc::Frame fr0 = gc.enter();
+        gccpp::Frame fr0 = gc.enter();
         auto point1 = gc.gc_alloc<Point>(2, 3);
         auto point2 = gc.gc_alloc<Point>(20, 30);
 
@@ -124,7 +124,7 @@ TEST(gc_test_nullptr, reset) {
 
     ASSERT_EQ(line->a->y, 3);
     ASSERT_EQ(line->b->y, 30);
-    gc.safepoint();
+    gc.safepoint_at_poll();
 
     ASSERT_EQ(line->a->x, 2);
     ASSERT_EQ(line->b->x, 20);
@@ -132,13 +132,13 @@ TEST(gc_test_nullptr, reset) {
     ASSERT_EQ(line->a->y, 3);
     ASSERT_EQ(line->b->y, 30);
 
-    gc.safepoint();
+    gc.safepoint_at_poll();
 }
 
 TEST(gc_test_many_safepoints, creation) {
-    tgc::Gc gc;
-    tgc::Frame fr = gc.enter();
-    gc.safepoint();
+    gccpp::MarkAndSweepCollector gc;
+    gccpp::Frame fr = gc.enter();
+    gc.safepoint_at_poll();
 
     auto point1 = gc.gc_alloc<Point>(2, 3);
     auto point2 = gc.gc_alloc<Point>(20, 30);
@@ -146,7 +146,7 @@ TEST(gc_test_many_safepoints, creation) {
 
     ASSERT_EQ(root->a->x, 2);
     ASSERT_EQ(root->b->x, 20);
-    gc.safepoint();
+    gc.safepoint_at_poll();
 
     ASSERT_EQ(root->a->x, 2);
     ASSERT_EQ(root->b->x, 20);
@@ -154,23 +154,23 @@ TEST(gc_test_many_safepoints, creation) {
     ASSERT_EQ(root->a->y, 3);
     ASSERT_EQ(root->b->y, 30);
 
-    gc.safepoint();
-    gc.safepoint();
+    gc.safepoint_at_poll();
+    gc.safepoint_at_poll();
 }
 
 TEST(gc_test_additional_scope, creation) {
-    tgc::Gc gc;
-    tgc::Frame fr = gc.enter();
-    gc.safepoint();
+    gccpp::MarkAndSweepCollector gc;
+    gccpp::Frame fr = gc.enter();
+    gc.safepoint_at_poll();
 
     auto point1 = gc.gc_alloc<Point>(2, 3);
     auto point2 = gc.gc_alloc<Point>(20, 30);
     {
-        tgc::Frame fr1 = gc.enter();
+        gccpp::Frame fr1 = gc.enter();
         auto root = gc.gc_alloc<Line>(point1, point2);
         ASSERT_EQ(root->a->x, 2);
         ASSERT_EQ(root->b->x, 20);
-        gc.safepoint();
+        gc.safepoint_at_poll();
     }
     ASSERT_EQ(point1->x, 2);
     ASSERT_EQ(point1->y, 3);
@@ -180,15 +180,15 @@ TEST(gc_test_additional_scope, creation) {
 }
 
 TEST(gc_test_fabric_method, creation) {
-    tgc::Gc gc;
-    tgc::Frame fr = gc.enter();
-    gc.safepoint();
+    gccpp::MarkAndSweepCollector gc;
+    gccpp::Frame fr = gc.enter();
+    gc.safepoint_at_poll();
 
     auto line = fr.root<Line>(createLine(gc));
 
     ASSERT_EQ(line->a->x, 2);
     ASSERT_EQ(line->b->x, 20);
-    gc.safepoint();
+    gc.safepoint_at_poll();
 
     ASSERT_EQ(line->a->x, 2);
     ASSERT_EQ(line->b->x, 20);
@@ -196,17 +196,17 @@ TEST(gc_test_fabric_method, creation) {
     ASSERT_EQ(line->a->y, 3);
     ASSERT_EQ(line->b->y, 30);
 
-    gc.safepoint();
+    gc.safepoint_at_poll();
 }
 
 TEST(gc_test_list, creation) {
-    tgc::Gc gc;
-    tgc::Frame fr = gc.enter();
-    gc.safepoint();
+    gccpp::MarkAndSweepCollector gc;
+    gccpp::Frame fr = gc.enter();
+    gc.safepoint_at_poll();
 
     auto line = gc.gc_alloc<List>(11, nullptr);
     {
-        tgc::Frame fr0 = gc.enter();
+        gccpp::Frame fr0 = gc.enter();
         auto last = gc.gc_alloc<List>(33, nullptr);
         auto elem1 = gc.gc_alloc<List>(22, last);
         line->next = elem1;
@@ -216,17 +216,17 @@ TEST(gc_test_list, creation) {
     ASSERT_EQ(line->next->data, 22);
     ASSERT_EQ(line->next->next->data, 33);
 
-    gc.safepoint();
+    gc.safepoint_at_poll();
 }
 
-TEST(gc_test_loop_reference, creation) {
-    tgc::Gc gc;
-    tgc::Frame fr = gc.enter();
-    gc.safepoint();
+TEST(gc_test_loop_references, creation) {
+    gccpp::MarkAndSweepCollector gc;
+    gccpp::Frame fr = gc.enter();
+    gc.safepoint_at_poll();
 
     auto line = gc.gc_alloc<List>(11, nullptr);
     {
-        tgc::Frame fr0 = gc.enter();
+        gccpp::Frame fr0 = gc.enter();
         auto last = gc.gc_alloc<List>(33, nullptr);
         auto elem1 = gc.gc_alloc<List>(22, last);
         line->next = elem1;
@@ -238,7 +238,15 @@ TEST(gc_test_loop_reference, creation) {
     ASSERT_EQ(line->next->next->data, 33);
     ASSERT_EQ(line->next->next->next->data, 11);
     ASSERT_EQ(line->next->next->next->next->data, 22);
-    gc.safepoint();
+    gc.safepoint_at_poll();
+
+    ASSERT_EQ(line->data, 11);
+    ASSERT_EQ(line->next->data, 22);
+    ASSERT_EQ(line->next->next->data, 33);
+    ASSERT_EQ(line->next->next->next->data, 11);
+    ASSERT_EQ(line->next->next->next->next->data, 22);
+
+    gc.safepoint_at_poll();
 }
 
 int main(int argc, char **argv) {
