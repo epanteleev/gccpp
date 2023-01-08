@@ -2,7 +2,7 @@
 
 #include <utility>
 #include "pointer/GcPtr.h"
-#include "gc/collector/MarkAndSweepCollector.h"
+#include "gc/collectors/MarkAndSweepCollector.h"
 #include "gc/GCCollected.h"
 
 struct Point : public gccpp::GCCollected {
