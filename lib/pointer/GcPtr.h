@@ -2,15 +2,16 @@
 
 #include <cstddef>
 #include <utility>
-#include "PtrBase.h"
-#include "meta/ObjMeta.h"
+#include "ObjectPointer.h"
+#include "header/MarkWord.h"
 #include "GcRoot.h"
+#include "gc/GcCollected.h"
 
 namespace tgc {
-    class ObjMeta;
+    class MarkWord;
 
     template<typename T>
-    class GcPtr: public details::PtrBase {
+    class GcPtr: public details::ObjectPointer {
     public:
         using pointer = T *;
         using element_type = T;
@@ -18,20 +19,20 @@ namespace tgc {
     public:
         GcPtr() = default;
 
-        explicit GcPtr(ObjMeta *meta): PtrBase(meta) {}
+        GcPtr(MarkWord *meta): ObjectPointer(meta) {}
 
         template<typename U>
-        explicit GcPtr(const GcPtr<U> &r): PtrBase(r.p) {}
+        GcPtr(const GcPtr<U> &r): ObjectPointer(r.p) {}
 
         template<typename U>
-        explicit GcPtr(const GcRoot<U> &r): PtrBase(r.p) {}
+        GcPtr(const GcRoot<U> &r): ObjectPointer(r()) {}
 
-        GcPtr(const GcPtr &r): PtrBase(r.p) {}
+        GcPtr(const GcPtr &r): ObjectPointer(r.p) {}
 
-        GcPtr(const GcRoot<T> &r): PtrBase(r.p) {}
+        GcPtr(const GcRoot<T> &r): ObjectPointer(r()) {}
 
         GcPtr(GcPtr &&r) noexcept:
-            PtrBase(std::exchange(r.p, nullptr)) {}
+                ObjectPointer(std::exchange(r.p, nullptr)) {}
 
     public:
         template<typename U>
@@ -61,7 +62,9 @@ namespace tgc {
             return *static_cast<pointer>(p->objPtr());
         }
 
-        explicit operator bool() const { return p != nullptr; }
+        explicit operator bool() const {
+            return p != nullptr;
+        }
 
         inline bool operator==(const GcPtr &r) const {
             return p == r.p;
@@ -72,11 +75,11 @@ namespace tgc {
         }
 
         inline bool operator==(const GcRoot<T> &r) const {
-            return p == r.p;
+            return p == r();
         }
 
         inline bool operator!=(const GcRoot<T> &r) const {
-            return p != r.p;
+            return p != r();
         }
 
         GcPtr &operator=(T *ptr) = delete;
@@ -84,6 +87,11 @@ namespace tgc {
         GcPtr &operator=(std::nullptr_t) {
             p = nullptr;
             return *this;
+        }
+    public:
+        template<typename Type>
+        static GcPtr<Type> from(tgc::GcCollected* self) noexcept {
+            return GcPtr<Type>(reinterpret_cast<MarkWord*>(reinterpret_cast<std::byte*>(self) - sizeof(MarkWord)));
         }
     };
 

@@ -1,4 +1,4 @@
-#include "PtrBase.h"
+#include "ObjectPointer.h"
 
 namespace tgc::details {
 
