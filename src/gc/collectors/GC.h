@@ -23,7 +23,7 @@ namespace gccpp {
                 return GcRoot<T>();
             }
 
-            std::memset(ptr, 0, size);
+            std::memset(ptr, 0, sizeof(MarkWord));
             auto start = ptr + sizeof(MarkWord);
             new(start) T(std::forward<Args>(args)...);
 
