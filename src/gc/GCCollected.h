@@ -1,9 +1,10 @@
 #pragma once
-#include "gc/operations/GCOperation.h"
 
 namespace gccpp {
+    class GCOperation;
+
     class GCCollected {
     public:
-        virtual void trace(GCOperation* visitor) noexcept = 0;
+        virtual void trace(GCOperation* operation) noexcept = 0;
     };
 }

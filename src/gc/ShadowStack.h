@@ -36,6 +36,9 @@ namespace gccpp::details {
             return stack[idx];
         }
 
+        ObjectPointer* addr(size_type idx) {
+            return &stack[idx];
+        }
     private:
         size_type sp{};
         std::array<ObjectPointer, MAX_STACK_SIZE> stack;

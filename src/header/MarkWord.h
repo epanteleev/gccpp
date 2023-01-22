@@ -2,6 +2,7 @@
 #include <cstddef>
 
 namespace gccpp {
+    //Todo special mw for particular GC algo.
     class MarkWord final {
     public:
         enum class Color : unsigned char {
@@ -20,8 +21,8 @@ namespace gccpp {
 
     public:
         Color color{};
-        unsigned int size{}; // as uint
+        void * forwarding_pointer{};
     };
 
-    static_assert(sizeof(MarkWord) <= sizeof(void *), "too large for small allocation");
+    static_assert(sizeof(MarkWord) <= sizeof(void *) * 2, "too large for small allocation");
 }

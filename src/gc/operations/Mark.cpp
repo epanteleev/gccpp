@@ -1,15 +1,13 @@
 #include "gc/operations/Mark.h"
-#include "gc/collectors/MarkAndSweepCollector.h"
+#include "gc/collectors/GC.h"
 #include <cassert>
 
 namespace gccpp::details {
-    void Mark::do_it(GC *_gc) {
-        auto gc = dynamic_cast<MarkAndSweepCollector*>(_gc);
-        assert(gc != nullptr);
-
+    void Mark::do_it(GC *gc) {
+        auto& stack = gc->stack();
         //Initial marking.
-        for(std::size_t i = 0; i < gc->shadowStack.size(); i++) {
-            worklist.push(gc->shadowStack[i]);
+        for(std::size_t i = 0; i < stack.size(); i++) {
+            worklist.push(stack[i]);
         }
 
         while (!worklist.empty()) {
@@ -23,8 +21,14 @@ namespace gccpp::details {
             }
             top.mw()->color = MarkWord::Color::Black;
 
-            auto obj = top.content<GCCollected>();
-            obj->trace(this);
+            top.trace(this);
         }
+    }
+
+    void Mark::trace(ObjectPointer &ptr) {
+        if (ptr == nullptr) {
+            return;
+        }
+        worklist.push(ptr);
     }
 }

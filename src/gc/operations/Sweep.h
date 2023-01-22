@@ -13,7 +13,7 @@ namespace gccpp::details {
         ~Sweep() override = default;
 
     public:
-        void trace(details::ObjectPointer ptr) override {}
+        void trace(details::ObjectPointer& ptr) override {}
 
         void do_it(GC *gc) override;
     };

@@ -20,15 +20,13 @@ namespace gccpp {
             std::size_t size = sizeof(MarkWord) + sizeof(T);
             auto *ptr = static_cast<std::byte *>(allocator->alloc(size));
             if (ptr == nullptr) {
-                return GcRoot<T>();
+                assert(false);
+                return GcRoot<T>(); //Todo impl logic of OOM.
             }
 
             std::memset(ptr, 0, sizeof(MarkWord));
             auto start = ptr + sizeof(MarkWord);
             new(start) T(std::forward<Args>(args)...);
-
-            auto mw = reinterpret_cast<MarkWord*>(ptr);
-            mw->size = size; // todo unsafe cast;
 
             auto* oop_ptr = shadowStack.push(details::ObjectPointer((MarkWord*)ptr));
             return GcRoot<T>(oop_ptr);
@@ -39,6 +37,13 @@ namespace gccpp {
             return Frame(shadowStack);
         }
 
+        details::ShadowStack& stack() noexcept {
+            return shadowStack;
+        }
+
+        Allocator* get_allocator() noexcept {
+            return allocator;
+        }
     public:
         virtual void safepoint_at_poll() = 0;
 

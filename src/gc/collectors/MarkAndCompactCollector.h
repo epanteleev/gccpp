@@ -2,7 +2,7 @@
 #include "gc/allocators/Allocator.h"
 
 #include "gc/collectors/GC.h"
-#include "gc/allocators/NaiveAllocator.h"
+#include "gc/allocators/SemispacesAllocator.h"
 
 #include <cstring>
 #include <cstdio>
@@ -15,9 +15,12 @@ namespace gccpp {
 
     class MarkAndCompactCollector: public GC {
     public:
-        MarkAndCompactCollector(): GC(new NaiveAllocator()) {}
+        explicit MarkAndCompactCollector(std::size_t heap_size): GC(new SemispacesAllocator(heap_size)) {}
         ~MarkAndCompactCollector() override {
             delete allocator;
         }
+
+    public:
+        void safepoint_at_poll() override;
     };
 }

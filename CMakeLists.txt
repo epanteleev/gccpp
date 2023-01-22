@@ -29,7 +29,15 @@ add_library(libgc STATIC
         src/gc/collectors/GC.h
         src/gc/allocators/NaiveAllocator.cpp
         src/gc/allocators/NaiveAllocator.h
-        src/gc/allocators/LinearAllocator.cpp src/gc/allocators/LinearAllocator.h)
+        src/gc/allocators/LinearAllocator.cpp
+        src/gc/allocators/LinearAllocator.h
+        src/gc/allocators/SemispacesAllocator.cpp
+        src/gc/allocators/SemispacesAllocator.h
+        src/gc/operations/UpdateReference.cpp
+        src/gc/operations/UpdateReference.h
+        src/gc/operations/Relocate.cpp
+        src/gc/operations/Relocate.h
+)
 
 set(CMAKE_CXX_FLAGS "-fno-strict-aliasing")
 #set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} " -Wall -Wextra -Wpedantic -Werror -fno-strict-aliasing")
