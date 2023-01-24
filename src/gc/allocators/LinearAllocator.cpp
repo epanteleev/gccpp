@@ -23,10 +23,12 @@ namespace gccpp {
         assert(std::in_range<int>(aligned_size));
         header->chunk_size = static_cast<int>(aligned_size);
 
+        //Zeroed object header.
+        std::memset(reinterpret_cast<void*>(current_address + sizeof(Header)), 0, 8);
+
         offset += aligned_size;
         allocation_count += 1;
-        last_allocated_object = reinterpret_cast<void*>(current_address + sizeof(Header));
-        return last_allocated_object;
+        return reinterpret_cast<void*>(current_address + sizeof(Header));
     }
 
     void LinearAllocator::free(void *addr) {
@@ -37,7 +39,6 @@ namespace gccpp {
     LinearAllocator::LinearAllocator(std::size_t _max_size):
         max_size(align(_max_size)) {
         start_ptr = _aligned_malloc(max_size, sizeof(std::size_t));
-        last_allocated_object = static_cast<std::byte*>(start_ptr) + max_size;
     }
 
     void LinearAllocator::release() noexcept {
@@ -45,7 +46,6 @@ namespace gccpp {
         std::memset(start_ptr, 0, offset); // for debugging
 #endif
         offset = 0;
-        last_allocated_object = nullptr;
         allocation_count = 0;
     }
 

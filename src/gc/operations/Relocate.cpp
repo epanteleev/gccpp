@@ -15,10 +15,11 @@ namespace gccpp::details {
             if (mv->color != MarkWord::Color::Black) {
                 return;
             }
-            auto new_address = mv->forwarding_pointer;
+            auto new_address = static_cast<MarkWord*>(mv->forwarding_pointer);
             std::memcpy(new_address, mv, header->chunk_size - sizeof(Header));
 
-            static_cast<MarkWord*>(new_address)->color = MarkWord::Color::White;
+            new_address->color = MarkWord::Color::White;
+            new_address->forwarding_pointer = nullptr;
         };
         allocator->active_space->visit(fn);
 

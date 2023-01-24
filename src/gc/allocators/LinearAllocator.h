@@ -12,8 +12,6 @@ namespace gccpp {
 
     class LinearAllocator final : public Allocator {
     public:
-        friend class LAIterator;
-    public:
         static constexpr unsigned char MAGIC = 0xAA;
     public:
         explicit LinearAllocator(std::size_t _max_size_in_byte);
@@ -38,7 +36,6 @@ namespace gccpp {
         void* start_ptr{};
         const std::size_t max_size{};
         std::size_t offset{};
-        void* last_allocated_object;
         std::size_t allocation_count{};
     };
 }

@@ -6,6 +6,7 @@
 
 #include <cstring>
 #include <cstdio>
+#include <cassert>
 
 namespace gccpp {
 
@@ -25,6 +26,7 @@ namespace gccpp {
             }
 
             std::memset(ptr, 0, sizeof(MarkWord));
+
             auto start = ptr + sizeof(MarkWord);
             new(start) T(std::forward<Args>(args)...);
 

@@ -1,6 +1,12 @@
 #include <iostream>
+#include <vector>
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    std::vector<int> vec;
+
+    for(auto i = vec.begin(); i != vec.end(); ++i) {
+        std::cout << "Hello, World!" << std::endl;
+    }
+
     return 0;
 }

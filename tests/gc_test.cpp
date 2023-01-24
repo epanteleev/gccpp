@@ -367,7 +367,7 @@ TEST(copying_gc_test_additional_scope, creation) {
 }
 
 TEST(copying_gc_test_fabric_method, creation) {
-    gccpp::MarkAndCompactCollector gc;
+    gccpp::MarkAndCompactCollector gc(1024);
     gccpp::Frame fr = gc.enter();
     gc.safepoint_at_poll();
 
@@ -432,7 +432,6 @@ TEST(copying_gc_test_loop_references, creation) {
     ASSERT_EQ(line->next->next->data, 33);
     ASSERT_EQ(line->next->next->next->data, 11);
     ASSERT_EQ(line->next->next->next->next->data, 22);
-
     gc.safepoint_at_poll();
 }
 
