@@ -5,7 +5,7 @@ enable_testing()
 set(TARGET_NAME gc-unit-tests)
 
 add_executable(${TARGET_NAME} gc_test.cpp)
-add_executable(allocator_test allocator_test.cpp)
+add_executable(allocator_test allocator_test.cpp utils/Objects.h)
 
 target_link_libraries(${TARGET_NAME} PRIVATE libgc GTest::gtest GTest::gtest_main)
 
