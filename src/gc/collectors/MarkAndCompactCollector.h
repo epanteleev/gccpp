@@ -1,7 +1,7 @@
 #pragma once
 #include "gc/allocators/Allocator.h"
 
-#include "gc/collectors/GC.h"
+#include "gc/collectors/BasicCollector.h"
 #include "gc/allocators/SemispacesAllocator.h"
 
 #include <cstring>
@@ -13,14 +13,16 @@ namespace gccpp {
         class Compact;
     }
 
-    class MarkAndCompactCollector: public GC {
+    class MarkAndCompactCollector: public BasicCollector {
     public:
-        explicit MarkAndCompactCollector(std::size_t heap_size): GC(new SemispacesAllocator(heap_size)) {}
+        explicit MarkAndCompactCollector(std::size_t heap_size):
+            BasicCollector(new SemispacesAllocator(heap_size)) {}
+
         ~MarkAndCompactCollector() override {
             delete allocator;
         }
 
     public:
-        void safepoint_at_poll() override;
+        void collect() override;
     };
 }

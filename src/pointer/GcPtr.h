@@ -4,11 +4,14 @@
 #include <utility>
 #include "ObjectPointer.h"
 #include "header/MarkWord.h"
-#include "GcRoot.h"
+
+#include "gc/Handle.h"
 #include "gc/GCCollected.h"
 
 namespace gccpp {
     class MarkWord;
+    template<typename T>
+    class Handle;
 
     template<typename T>
     class GcPtr: public details::ObjectPointer {
@@ -23,24 +26,21 @@ namespace gccpp {
         template<typename U>
         GcPtr(const GcPtr<U> &r): ObjectPointer(r.p) {}
 
-        template<typename U>
-        GcPtr(const GcRoot<U> &r): ObjectPointer(r()) {}
-
         GcPtr(const GcPtr &r): ObjectPointer(r.p) {}
 
-        GcPtr(const GcRoot<T> &r): ObjectPointer(r()) {}
+        GcPtr(Handle<T> &r);
 
         GcPtr(GcPtr &&r) noexcept:
                 ObjectPointer(std::exchange(r.p, nullptr)) {}
 
     public:
         template<typename U>
-        GcPtr &operator=(const GcPtr<U> &r) {
+        GcPtr<T> &operator=(const GcPtr<U> &r) { //todo check convertable
             p = r.p;
             return *this;
         }
 
-        GcPtr &operator=(const GcPtr &r) {
+        GcPtr<T> &operator=(const GcPtr &r) {
             if (this == &r) {
                 return *this;
             }
@@ -48,10 +48,12 @@ namespace gccpp {
             return *this;
         }
 
-        GcPtr &operator=(GcPtr &&r) noexcept {
+        GcPtr<T> &operator=(GcPtr &&r) noexcept {
             p = std::exchange(r.p, nullptr);
             return *this;
         }
+
+        GcPtr<T> &operator=(Handle<T> &r) noexcept;
 
         inline pointer operator->() const {
             return static_cast<pointer>(p->object());
@@ -73,13 +75,8 @@ namespace gccpp {
             return p != r.p;
         }
 
-        inline bool operator==(const GcRoot<T> &r) const {
-            return p == r();
-        }
-
-        inline bool operator!=(const GcRoot<T> &r) const {
-            return p != r();
-        }
+        inline bool operator==(const Handle<T> &r) const;
+        inline bool operator!=(const Handle<T> &r) const;
 
     public:
         template<typename Type>

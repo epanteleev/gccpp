@@ -5,7 +5,8 @@
 #include "gc/operations/Relocate.h"
 
 namespace gccpp {
-    void MarkAndCompactCollector::safepoint_at_poll() {
+
+    void MarkAndCompactCollector::collect() {
         details::Mark mark;
         mark.do_it(this);
 

@@ -25,5 +25,6 @@ namespace gccpp {
     public: //todo public temporally
         LinearAllocator *active_space;
         LinearAllocator *free_space;
+        std::mutex mutex;
     };
 }

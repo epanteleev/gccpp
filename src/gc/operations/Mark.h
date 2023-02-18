@@ -13,7 +13,7 @@ namespace gccpp::details {
 
     public:
         void trace(details::ObjectPointer& ptr) override;
-        void do_it(GC *gc) override;
+        void do_it(BasicCollector *gc) override;
 
     private:
         std::stack<details::ObjectPointer> worklist;

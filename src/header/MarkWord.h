@@ -2,7 +2,7 @@
 #include <cstddef>
 
 namespace gccpp {
-    //Todo special mw for particular GC algo.
+    //Todo special mw for particular BasicCollector algo.
     class MarkWord final {
     public:
         enum class Color : unsigned char {

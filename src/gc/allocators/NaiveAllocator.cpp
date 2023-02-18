@@ -6,7 +6,10 @@
 namespace gccpp {
     void *NaiveAllocator::alloc(std::size_t size) {
         void* ptr = std::malloc(size);
-        allocated.insert(ptr);
+        {
+            std::lock_guard _l(lock);
+            allocated.insert(ptr);
+        }
         return ptr;
     }
 

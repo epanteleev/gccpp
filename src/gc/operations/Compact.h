@@ -16,7 +16,7 @@ namespace gccpp::details {
             }
             worklist.push(&ptr);
         };
-        void do_it(GC* gc) override;
+        void do_it(BasicCollector* gc) override;
 
     private:
         std::stack<details::ObjectPointer*> worklist;

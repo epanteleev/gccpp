@@ -4,15 +4,16 @@
 #include <cstdio>
 #include <exception>
 #include <cstring>
-#include <utility>
 #include <cassert>
 
 namespace gccpp {
     LinearAllocator::~LinearAllocator() {
-       _aligned_free(start_ptr);
+       std::free(start_ptr);
     }
 
     void *LinearAllocator::alloc(std::size_t size) {
+        const std::lock_guard<std::mutex> _l(lock);
+
         const std::size_t current_address = reinterpret_cast<std::size_t>(start_ptr) + offset;
         const std::size_t aligned_size = align(size + sizeof(Header));
         if (aligned_size + offset > max_size) {
@@ -38,7 +39,7 @@ namespace gccpp {
 
     LinearAllocator::LinearAllocator(std::size_t _max_size):
         max_size(align(_max_size)) {
-        start_ptr = _aligned_malloc(max_size, sizeof(std::size_t));
+        start_ptr = std::aligned_alloc(sizeof(std::size_t), max_size);
     }
 
     void LinearAllocator::release() noexcept {

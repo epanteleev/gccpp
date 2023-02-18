@@ -3,7 +3,7 @@
 #include <cassert>
 
 namespace gccpp::details {
-    void Sweep::do_it(GC *_gc) {
+    void Sweep::do_it(BasicCollector *_gc) {
         auto gc = dynamic_cast<MarkAndSweepCollector*>(_gc);
         assert(gc != nullptr);
 

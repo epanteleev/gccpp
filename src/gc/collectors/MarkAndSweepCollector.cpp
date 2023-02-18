@@ -4,7 +4,8 @@
 #include "gc/operations/Sweep.h"
 
 namespace gccpp {
-    void MarkAndSweepCollector::safepoint_at_poll() {
+
+    void MarkAndSweepCollector::collect() {
         details::Mark mark;
         mark.do_it(this);
 

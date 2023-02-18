@@ -10,6 +10,7 @@ namespace gccpp {
     }
 
     void *SemispacesAllocator::alloc(std::size_t size) {
+        std::lock_guard _l(mutex);
         return active_space->alloc(size);
     }
 

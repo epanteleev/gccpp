@@ -2,7 +2,7 @@
 
 namespace gccpp {
     class MarkAndSweepCollector;
-    class GC;
+    class BasicCollector;
 
     namespace details {
         class ObjectPointer;
@@ -12,6 +12,6 @@ namespace gccpp {
     public:
         virtual ~GCOperation() = default;
         virtual void trace(details::ObjectPointer& ptr) = 0;
-        virtual void do_it(GC* gc) = 0;
+        virtual void do_it(BasicCollector* gc) = 0;
     };
 }

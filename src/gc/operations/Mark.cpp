@@ -1,13 +1,16 @@
 #include "gc/operations/Mark.h"
-#include "gc/collectors/GC.h"
+#include "gc/collectors/BasicCollector.h"
 #include <cassert>
+#include "gc/containers/GlobalCtx.h"
 
 namespace gccpp::details {
-    void Mark::do_it(GC *gc) {
-        auto& stack = gc->stack();
+    void Mark::do_it(BasicCollector *gc) {
+        auto& stacks = gc->context()->all_stacks();
         //Initial marking.
-        for(std::size_t i = 0; i < stack.size(); i++) {
-            worklist.push(stack[i]);
+        for(auto&[_, stack]: stacks) {
+            for(std::size_t i = 0; i < stack.size(); i++) {
+                worklist.push(stack[i]);
+            }
         }
 
         while (!worklist.empty()) {

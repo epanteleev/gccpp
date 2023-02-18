@@ -1,11 +1,11 @@
 #include "gc/operations/Relocate.h"
 
 #include "gc/allocators/SemispacesAllocator.h"
-#include "gc/collectors/GC.h"
+#include "gc/collectors/BasicCollector.h"
 #include <cassert>
 
 namespace gccpp::details {
-    void Relocate::do_it(gccpp::GC *gc) {
+    void Relocate::do_it(gccpp::BasicCollector *gc) {
         auto allocator = dynamic_cast<SemispacesAllocator*>(gc->get_allocator());
         assert(allocator != nullptr);
 

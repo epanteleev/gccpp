@@ -4,7 +4,7 @@
 #include <cassert>
 
 namespace gccpp::details {
-    void Compact::do_it(GC *gc) {
+    void Compact::do_it(BasicCollector *gc) {
         auto allocator = dynamic_cast<SemispacesAllocator*>(gc->get_allocator());
         auto to_region = allocator->free_space;
 

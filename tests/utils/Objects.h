@@ -30,6 +30,13 @@ public:
     gccpp::GcPtr<Point> b;
 };
 
+gccpp::GcPtr<Line> createLine(gccpp::BasicCollector &gc) {
+    auto point1 = gc.alloc<Point>(2, 3);
+    auto point2 = gc.alloc<Point>(20, 30);
+    auto root = gc.alloc<Line>(point1, point2);
+    return root;
+}
+
 struct List: public gccpp::GCCollected {
 public:
     List(int _data, gccpp::GcPtr<List> _next) :

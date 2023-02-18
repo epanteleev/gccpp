@@ -1,7 +1,9 @@
 #pragma once
 
-#include <unordered_set>
 #include "gc/allocators/Allocator.h"
+
+#include <mutex>
+#include <unordered_set>
 
 namespace gccpp {
     class NaiveAllocator: public Allocator {
@@ -13,10 +15,11 @@ namespace gccpp {
         void* alloc(std::size_t size) override;
         void free(void* addr) override;
 
-        std::unordered_set<void*>& alloc_stat() {
+        std::unordered_set<void*>& alloc_stat() { //todo replace to erase????
             return allocated;
         }
     private:
         std::unordered_set<void*> allocated;
+        std::mutex lock;
     };
 }

@@ -3,17 +3,20 @@
 #include "UpdateReference.h"
 #include "gc/GCCollected.h"
 #include "gc/operations/GCOperation.h"
-#include "gc/collectors/GC.h"
+#include "gc/collectors/BasicCollector.h"
+#include "gc/containers/GlobalCtx.h"
 
 namespace gccpp::details {
-    void UpdateReference::do_it(GC *gc) {
-        auto& stack = gc->stack();
+    void UpdateReference::do_it(BasicCollector *gc) {
+        auto& stacks = gc->context()->all_stacks();
 
-        for(std::size_t i = 0; i < stack.size(); i++) {
-            if (stack[i] == nullptr) {
-                continue;
+        for(auto&[_, stack]: stacks) {
+            for(std::size_t i = 0; i < stack.size(); i++) {
+                if (stack[i] == nullptr) {
+                    continue;
+                }
+                worklist.push(stack.addr(i));
             }
-            worklist.push(stack.addr(i));
         }
 
         while (!worklist.empty()) {

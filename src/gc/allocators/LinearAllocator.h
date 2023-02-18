@@ -1,6 +1,7 @@
 #pragma once
 #include "gc/allocators/Allocator.h"
 #include <functional>
+#include <mutex>
 
 namespace gccpp {
 
@@ -37,6 +38,7 @@ namespace gccpp {
         const std::size_t max_size{};
         std::size_t offset{};
         std::size_t allocation_count{};
+        std::mutex lock;
     };
 }
 
