@@ -95,7 +95,7 @@ namespace gccpp {
         std::unique_ptr<BasicCollector> gc{};
         details::Worker worker;
         details::WorkerState state;
-        details::ThreadLock global_lock;
+        details::ThreadLock thread_lock;
         volatile bool self_suspend{};
         details::ThreadsStacks stacks;
     };

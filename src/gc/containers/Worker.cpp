@@ -7,29 +7,24 @@ namespace gccpp::details {
     void Worker::run(details::Worker& self) noexcept {
         self.ctx.state.wait_start();
 
-        if (self.is_terminate()) {
+        if (self.ctx.state.is_terminate()) {
             return;
         }
 
-        while (!self.is_terminate()) {
+        while (!self.ctx.state.is_terminate()) {
             if (self.wait_job()) {
                 return;
             }
 
-            self.ctx.global_lock.stw();
+            self.ctx.thread_lock.stw();
 
             self.ctx.gc->collect();
 
             self.ctx.self_suspend = false;
             details::mem::write_barrier();
-            self.ctx.global_lock.run_world();
+            self.ctx.thread_lock.run_world();
             self.ctx.state.mutators_continue();
-
         }
-    }
-
-    bool Worker::is_terminate() {
-        return ctx.state.is_terminate();
     }
 
     void Worker::collect() {

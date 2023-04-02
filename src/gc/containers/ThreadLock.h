@@ -28,7 +28,9 @@ namespace gccpp::details {
         bool stw();
         void run_world();
 
+    private:
         iterator find_entry();
+
     private:
         static thread_local SpinLock threadLock;
 

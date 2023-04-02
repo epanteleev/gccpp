@@ -14,6 +14,7 @@ public:
     inline void notify() noexcept {
         cv.notify_all();
     }
+
 private:
     std::condition_variable cv;
     std::mutex mutex;

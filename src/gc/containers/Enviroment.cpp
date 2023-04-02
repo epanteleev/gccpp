@@ -19,23 +19,23 @@ namespace gccpp {
     }
 
     void Enviroment::safepoint_slow() {
-        global_lock.unlock();
+        thread_lock.unlock();
         state.wait_collect_ending();
-        global_lock.lock();
+        thread_lock.lock();
 
         assert(self_suspend == false);
     }
 
     void Enviroment::initialize_for_current_thread() {
-        global_lock.initialize_for_current_thread();
+        thread_lock.initialize_for_current_thread();
         stacks.initialize_for_current_thread();
-        global_lock.lock();
+        thread_lock.lock();
     }
 
     void Enviroment::destroy_for_current_thread() {
-        global_lock.unlock();
+        thread_lock.unlock();
         stacks.destroy_for_current_thread();
-        global_lock.destroy_for_current_thread();
+        thread_lock.destroy_for_current_thread();
     }
 
     void Enviroment::start_collection() {
@@ -45,9 +45,9 @@ namespace gccpp {
     }
 
     void Enviroment::unmanaged_context(const std::function<void()>& closure) {
-        global_lock.unlock();
+        thread_lock.unlock();
         closure();
-        global_lock.lock();
+        thread_lock.lock();
     }
 
     Enviroment& Enviroment::init(std::unique_ptr<BasicCollector> gc) {

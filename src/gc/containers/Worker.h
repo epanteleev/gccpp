@@ -22,10 +22,6 @@ namespace gccpp::details {
         void start();
         void collect();
 
-        void continue_mutators();
-    public:
-        bool is_terminate();
-
     private:
         static void run(Worker&) noexcept;
         bool wait_job();
