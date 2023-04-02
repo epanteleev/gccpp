@@ -2,12 +2,16 @@
 
 #include <thread>
 #include <shared_mutex>
-#include <unordered_map>
+#include <deque>
+
+#include "gc/containers/SpinLock.h"
 
 namespace gccpp::details {
     class ThreadLock final {
     public:
-        using type = std::unordered_map<std::thread::id, std::unique_ptr<std::mutex>>; //todo pointer???
+        using element = std::pair<std::thread::id, details::SpinLock*>;
+        using type = std::deque<element>;
+        using iterator = type::iterator;
     public:
         ThreadLock() = default;
         ~ThreadLock() = default;
@@ -21,14 +25,15 @@ namespace gccpp::details {
         void unlock();
 
     public: // can be used only in gc threads
-        bool try_stw();
+        bool stw();
         void run_world();
 
+        iterator find_entry();
     private:
-        type::iterator find_entry();
+        static thread_local SpinLock threadLock;
+
     private:
         type lock_map;
-        mutable std::shared_mutex mutex;
+        mutable SpinLock mutex;
     };
-
 }

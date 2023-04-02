@@ -1,27 +1,28 @@
 #pragma once
 
 #include "gc/collectors/BasicCollector.h"
-#include "gc/allocators/NaiveAllocator.h"
+#include "gc/allocators/MallocBasedAllocator.h"
+#include "gc/containers/Buffer.h"
 #include <cstring>
 #include <cstdio>
 
 namespace gccpp {
-    namespace details {
-        class Mark;
-        class Sweep;
-    }
 
     class MarkAndSweepCollector : public BasicCollector {
         friend class details::Mark;
         friend class details::Sweep;
     public:
-        explicit MarkAndSweepCollector():
-            BasicCollector(new NaiveAllocator()) {}
+        explicit MarkAndSweepCollector(std::size_t max_size):
+            BasicCollector(new MallocBasedAllocator(max_size)) {}
 
         ~MarkAndSweepCollector() override {
             delete allocator;
         }
+
     public:
         void collect() override;
+
+    private:
+        Buffer<details::ObjectPointer*> worklist{};
     };
 }

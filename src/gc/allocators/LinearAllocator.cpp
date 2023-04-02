@@ -1,10 +1,13 @@
 #include "LinearAllocator.h"
+#include "gc/containers/SpinLock.h"
 
 #include <cstdlib>
 #include <cstdio>
 #include <exception>
 #include <cstring>
 #include <cassert>
+#include <utility>
+#include <sstream>
 
 namespace gccpp {
     LinearAllocator::~LinearAllocator() {
@@ -12,34 +15,35 @@ namespace gccpp {
     }
 
     void *LinearAllocator::alloc(std::size_t size) {
-        const std::lock_guard<std::mutex> _l(lock);
+        const std::lock_guard<details::SpinLock> _l(lock);
 
         const std::size_t current_address = reinterpret_cast<std::size_t>(start_ptr) + offset;
-        const std::size_t aligned_size = align(size + sizeof(Header));
+        const std::size_t aligned_size = align(size + sizeof(Chunk));
         if (aligned_size + offset > max_size) {
             return nullptr;
         }
-        auto* header = reinterpret_cast<Header*>(current_address);
+        auto* header = reinterpret_cast<Chunk*>(current_address);
         header->magic = MAGIC;
         assert(std::in_range<int>(aligned_size));
         header->chunk_size = static_cast<int>(aligned_size);
 
-        //Zeroed object header.
-        std::memset(reinterpret_cast<void*>(current_address + sizeof(Header)), 0, 8);
-
         offset += aligned_size;
         allocation_count += 1;
-        return reinterpret_cast<void*>(current_address + sizeof(Header));
+        return reinterpret_cast<void*>(current_address + sizeof(Chunk));
     }
 
     void LinearAllocator::free(void *addr) {
-        printf("LinearAllocator::free is unreachable.\n");
+        (void)(addr); //todo make special macros
+        fprintf(stderr,"LinearAllocator::free is unreachable.\n");
         std::terminate();
     }
 
     LinearAllocator::LinearAllocator(std::size_t _max_size):
         max_size(align(_max_size)) {
         start_ptr = std::aligned_alloc(sizeof(std::size_t), max_size);
+#ifndef NDEBUG
+        std::memset(start_ptr, 0, max_size); // for debugging
+#endif
     }
 
     void LinearAllocator::release() noexcept {
@@ -52,32 +56,39 @@ namespace gccpp {
 
     bool LinearAllocator::contains(void *object_address) const noexcept {
         const auto end = reinterpret_cast<void*>(reinterpret_cast<std::size_t>(start_ptr) + offset);
-        auto* header = reinterpret_cast<Header*>(reinterpret_cast<size_t>(object_address) - sizeof(Header));
+#ifndef NDEBUG
+        auto* header = reinterpret_cast<Chunk*>(reinterpret_cast<size_t>(object_address) - sizeof(Chunk));
         assert(header->magic == MAGIC);
-
+#endif
         return start_ptr <= object_address && object_address < end;
     }
 
-    Header *LinearAllocator::header(const void *object_address) noexcept {
-        auto* header = reinterpret_cast<Header*>(reinterpret_cast<std::size_t>(object_address) - sizeof(Header));
+    Chunk *LinearAllocator::header(const void *object_address) noexcept {
+        auto* header = reinterpret_cast<Chunk*>(reinterpret_cast<std::size_t>(object_address) - sizeof(Chunk));
         assert(header->magic == MAGIC);
         return header;
     }
 
-    void LinearAllocator::visit(const std::function<void(Header *)>& fn) noexcept {
+    void LinearAllocator::visit(const std::function<void(Chunk *)>& fn) noexcept {
         if (allocation_count == 0) {
             return;
         }
         auto current = static_cast<std::byte*>(start_ptr);
 
         do {
-            auto h = reinterpret_cast<Header*>(current);
+            auto h = reinterpret_cast<Chunk*>(current);
             assert(h->magic == MAGIC);
             fn(h);
 
             current = reinterpret_cast<std::byte*>(current) + h->chunk_size;
-
         } while(current < static_cast<std::byte*>(start_ptr) + offset);
+    }
+
+    void LinearAllocator::print(std::ostringstream &out) {
+        out << "Start: " << start_ptr << "\n"
+            << "Max size: " << max_size << "\n"
+            << "Offset: " << offset << "\n"
+            << "Allocation count: " << allocation_count << "\n";
     }
 
     static_assert(sizeof(std::size_t) == 8);

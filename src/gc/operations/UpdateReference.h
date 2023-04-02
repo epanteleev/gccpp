@@ -2,19 +2,21 @@
 
 #include <stack>
 #include "GCOperation.h"
+#include "gc/containers/Buffer.h"
 #include "pointer/ObjectPointer.h"
 
 namespace gccpp::details {
 
     class UpdateReference final : public GCOperation {
     public:
-        UpdateReference() = default;
+        explicit UpdateReference(Buffer<details::ObjectPointer*>& _worklist):
+            worklist(_worklist) {}
 
     public:
         void trace(details::ObjectPointer& ptr) override;
-        void do_it(BasicCollector *gc) override;
+        std::size_t do_it(BasicCollector *gc) override;
 
     private:
-        std::stack<details::ObjectPointer*> worklist;
+        Buffer<details::ObjectPointer*>& worklist;
     };
 }

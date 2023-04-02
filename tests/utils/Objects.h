@@ -1,23 +1,25 @@
 #pragma once
 
 #include <utility>
-#include "pointer/GcPtr.h"
-#include "gc/GCCollected.h"
+#include "pointer/Oop.inline.h"
+#include "gc/GarbageCollected.h"
 #include "gc/operations/GCOperation.h"
 
-struct Point : public gccpp::GCCollected {
+struct Point : public gccpp::GarbageCollected {
 public:
     Point(int _x, int _y) : x(_x), y(_y) {}
 
-    void trace(gccpp::GCOperation *visitor) noexcept override {}
+    void trace(gccpp::GCOperation *visitor) noexcept override {
+        (void)(visitor);
+    }
 public:
     int x;
     int y;
 };
 
-struct Line : public gccpp::GCCollected {
+struct Line : public gccpp::GarbageCollected {
 public:
-    Line(gccpp::GcPtr<Point> _a, gccpp::GcPtr<Point> _b) :
+    Line(gccpp::Oop<Point> _a, gccpp::Oop<Point> _b) :
             a(std::move(_a)), b(std::move(_b)) {}
 
     void trace(gccpp::GCOperation *visitor) noexcept override {
@@ -26,26 +28,30 @@ public:
     }
 
 public:
-    gccpp::GcPtr<Point> a;
-    gccpp::GcPtr<Point> b;
+    static gccpp::Oop<Line> createLine(gccpp::Enviroment &ctx) {
+        auto point1 = ctx.alloc<Point>(2, 3);
+        auto point2 = ctx.alloc<Point>(20, 30);
+        auto root = ctx.alloc<Line>(point1, point2);
+        return root;
+    }
+
+public:
+    gccpp::Oop<Point> a;
+    gccpp::Oop<Point> b;
 };
 
-gccpp::GcPtr<Line> createLine(gccpp::BasicCollector &gc) {
-    auto point1 = gc.alloc<Point>(2, 3);
-    auto point2 = gc.alloc<Point>(20, 30);
-    auto root = gc.alloc<Line>(point1, point2);
-    return root;
-}
-
-struct List: public gccpp::GCCollected {
+struct List: public gccpp::GarbageCollected {
 public:
-    List(int _data, gccpp::GcPtr<List> _next) :
+    List() = default;
+    List(int _data, gccpp::Oop<List> _next) :
             data(_data), next(std::move(_next)) {}
 
+public:
     void trace(gccpp::GCOperation* visitor) noexcept override {
         visitor->trace(next);
     }
+
 public:
-    int data;
-    gccpp::GcPtr<List> next;
+    int data{};
+    gccpp::Oop<List> next{};
 };

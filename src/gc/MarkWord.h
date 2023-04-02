@@ -16,7 +16,7 @@ namespace gccpp {
 
         [[nodiscard]]
         void *object() const {
-            return (void *) ((std::byte*)this + sizeof(MarkWord));
+            return (void *) ((char*)this + sizeof(MarkWord));
         }
 
     public:

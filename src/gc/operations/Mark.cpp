@@ -1,24 +1,27 @@
 #include "gc/operations/Mark.h"
 #include "gc/collectors/BasicCollector.h"
 #include <cassert>
-#include "gc/containers/GlobalCtx.h"
+#include "gc/containers/Enviroment.h"
 
 namespace gccpp::details {
-    void Mark::do_it(BasicCollector *gc) {
-        auto& stacks = gc->context()->all_stacks();
+    std::size_t Mark::do_it(BasicCollector *gc) {
+        auto& stacks = gc->context()->stacks;
         //Initial marking.
-        for(auto&[_, stack]: stacks) {
-            for(std::size_t i = 0; i < stack.size(); i++) {
-                worklist.push(stack[i]);
+        auto visit = [&](ThreadsStacks::element& pair) {
+            for(std::size_t i = 0; i < pair.second->size(); i++) {
+                auto root = pair.second->addr(i);
+                if (*root == nullptr) {
+                    continue;
+                }
+                worklist.push(root);
             }
-        }
+        };
+        stacks.visit(visit);
 
         while (!worklist.empty()) {
-            auto top = worklist.top();
-            worklist.pop();
-            if (top == nullptr) {
-                continue;
-            }
+            auto top = *worklist.pop();
+            assert(top != nullptr);
+
             if (top.mw()->color == MarkWord::Color::Black) {
                 continue;
             }
@@ -26,12 +29,14 @@ namespace gccpp::details {
 
             top.trace(this);
         }
+        return 0;
     }
 
     void Mark::trace(ObjectPointer &ptr) {
         if (ptr == nullptr) {
             return;
         }
-        worklist.push(ptr);
+        worklist.push(&ptr);
     }
+
 }

@@ -2,8 +2,8 @@
 
 #include "gc/collectors/MarkAndSweepCollector.h"
 #include "gc/operations/GCOperation.h"
-#include "gc/GCCollected.h"
-#include "gc/allocators/NaiveAllocator.h"
+#include "gc/GarbageCollected.h"
+#include "gc/allocators/MallocBasedAllocator.h"
 #include "pointer/ObjectPointer.h"
 
 namespace gccpp::details {
@@ -13,8 +13,10 @@ namespace gccpp::details {
         ~Sweep() override = default;
 
     public:
-        void trace(details::ObjectPointer& ptr) override {}
+        void trace(details::ObjectPointer& ptr) override {
+            (void)(ptr);
+        }
 
-        void do_it(BasicCollector *gc) override;
+        std::size_t do_it(BasicCollector *gc) override;
     };
 }

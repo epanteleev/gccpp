@@ -16,6 +16,7 @@ namespace gccpp {
     public:
         void* alloc(std::size_t size) override;
         void free(void* addr) override;
+        void print(std::ostringstream &out) override;
 
     public:
         void change_space() noexcept {
@@ -25,6 +26,5 @@ namespace gccpp {
     public: //todo public temporally
         LinearAllocator *active_space;
         LinearAllocator *free_space;
-        std::mutex mutex;
     };
 }

@@ -1,11 +1,8 @@
 #pragma once
-#include "header/MarkWord.h"
-#include "gc/GCCollected.h"
-#include <concepts>
+#include "gc/MarkWord.h"
+#include "gc/GarbageCollected.h"
 
 namespace gccpp::details {
-    template<class T>
-    concept GCCollectedType = std::derived_from<T, GCCollected>;
 
     class ObjectPointer {
     public:
@@ -41,16 +38,17 @@ namespace gccpp::details {
         ObjectPointer &operator=(void *ptr) = delete;
     public:
 
-        template<GCCollectedType Type>
+        template<GarbageCollectedType Type>
         [[nodiscard]]
-        Type* content() const noexcept {
+        inline Type* content() const noexcept {
             return static_cast<Type*>(p->object());
         }
 
         void trace(GCOperation* op) const noexcept {
-            content<GCCollected>()->trace(op);
+            content<GarbageCollected>()->trace(op);
         }
-    public:
+
+    protected:
         MarkWord* p{};
     };
 }

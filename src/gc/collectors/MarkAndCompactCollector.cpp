@@ -1,19 +1,19 @@
 #include "gc/collectors/MarkAndCompactCollector.h"
 #include "gc/operations/Mark.h"
-#include "gc/operations/Compact.h"
+#include "gc/operations/Reallocate.h"
 #include "gc/operations/UpdateReference.h"
 #include "gc/operations/Relocate.h"
 
 namespace gccpp {
 
     void MarkAndCompactCollector::collect() {
-        details::Mark mark;
+        details::Mark mark(worklist);
         mark.do_it(this);
 
-        details::Compact compact;
+        details::Reallocate compact(worklist);
         compact.do_it(this);
 
-        details::UpdateReference updateReference;
+        details::UpdateReference updateReference(worklist);
         updateReference.do_it(this);
 
         details::Relocate relocate;

@@ -3,7 +3,7 @@
 
 #include <stack>
 
-#include "gc/GCCollected.h"
+#include "gc/GarbageCollected.h"
 #include "gc/operations/GCOperation.h"
 
 namespace gccpp::details {
@@ -12,8 +12,10 @@ namespace gccpp::details {
         Relocate() = default;
 
     public:
-        void trace(details::ObjectPointer& ptr) override {}
+        void trace(details::ObjectPointer& ptr) override {
+            (void)(ptr); //todo
+        }
 
-        void do_it(BasicCollector *gc) override;
+        std::size_t do_it(BasicCollector *gc) override;
     };
 }

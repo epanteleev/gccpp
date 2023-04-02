@@ -1,5 +1,6 @@
 #pragma once
 #include <cstddef>
+#include <iosfwd>
 
 namespace gccpp {
     class Allocator {
@@ -7,5 +8,6 @@ namespace gccpp {
         virtual ~Allocator() = default;
         virtual void* alloc(std::size_t size) = 0;
         virtual void free(void* addr) = 0;
+        virtual void print(std::ostringstream& out) = 0;
     };
 }

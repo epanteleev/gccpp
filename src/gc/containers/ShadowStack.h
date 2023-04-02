@@ -32,11 +32,12 @@ namespace gccpp::details {
             return sp;
         }
 
-        ObjectPointer operator[](size_type idx) {
+        [[nodiscard]]
+        inline ObjectPointer at(size_type idx) const noexcept {
             return stack[idx];
         }
 
-        ObjectPointer* addr(size_type idx) {
+        inline ObjectPointer* addr(size_type idx) noexcept {
             return &stack[idx];
         }
     private:

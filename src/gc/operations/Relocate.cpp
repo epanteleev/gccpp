@@ -5,18 +5,20 @@
 #include <cassert>
 
 namespace gccpp::details {
-    void Relocate::do_it(gccpp::BasicCollector *gc) {
-        auto allocator = dynamic_cast<SemispacesAllocator*>(gc->get_allocator());
+    std::size_t Relocate::do_it(gccpp::BasicCollector *gc) {
+        auto allocator = dynamic_cast<SemispacesAllocator*>(gc->allocator);
         assert(allocator != nullptr);
 
-        auto fn = [&](Header* header) -> void {
-            auto* mv = reinterpret_cast<MarkWord*>(reinterpret_cast<std::byte*>(header) + sizeof(Header));
+        auto fn = [&](Chunk* header) -> void {
+            auto* mw = header->mw();
 
-            if (mv->color != MarkWord::Color::Black) {
+            if (mw->color != MarkWord::Color::Black) {
                 return;
             }
-            auto new_address = static_cast<MarkWord*>(mv->forwarding_pointer);
-            std::memcpy(new_address, mv, header->chunk_size - sizeof(Header));
+            auto new_address = static_cast<MarkWord*>(mw->forwarding_pointer);
+            assert(new_address != nullptr);
+
+            std::memcpy(new_address, mw, header->object_size());
 
             new_address->color = MarkWord::Color::White;
             new_address->forwarding_pointer = nullptr;
@@ -25,5 +27,6 @@ namespace gccpp::details {
 
         allocator->active_space->release();
         allocator->change_space();
+        return 0;
     }
 }

@@ -3,12 +3,14 @@
 #include <stack>
 #include "pointer/ObjectPointer.h"
 #include "gc/operations/GCOperation.h"
-#include "gc/allocators/NaiveAllocator.h"
+#include "gc/allocators/MallocBasedAllocator.h"
+#include "gc/containers/Buffer.h"
 
 namespace gccpp::details {
-    class Compact : public GCOperation {
+    class Reallocate : public GCOperation {
     public:
-        Compact() = default;
+        explicit Reallocate(Buffer<details::ObjectPointer*>& _worklist):
+            worklist(_worklist) {}
 
         void trace(details::ObjectPointer& ptr) override {
             if (ptr == nullptr) {
@@ -16,9 +18,9 @@ namespace gccpp::details {
             }
             worklist.push(&ptr);
         };
-        void do_it(BasicCollector* gc) override;
+        std::size_t do_it(BasicCollector* gc) override;
 
     private:
-        std::stack<details::ObjectPointer*> worklist;
+        Buffer<details::ObjectPointer*>& worklist;
     };
 }

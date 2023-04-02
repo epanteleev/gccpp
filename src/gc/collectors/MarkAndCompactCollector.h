@@ -3,6 +3,7 @@
 
 #include "gc/collectors/BasicCollector.h"
 #include "gc/allocators/SemispacesAllocator.h"
+#include "gc/containers/Buffer.h"
 
 #include <cstring>
 #include <cstdio>
@@ -10,7 +11,7 @@
 namespace gccpp {
     namespace details {
         class Mark;
-        class Compact;
+        class Reallocate;
     }
 
     class MarkAndCompactCollector: public BasicCollector {
@@ -24,5 +25,7 @@ namespace gccpp {
 
     public:
         void collect() override;
+    private:
+        Buffer<details::ObjectPointer*> worklist{};
     };
 }

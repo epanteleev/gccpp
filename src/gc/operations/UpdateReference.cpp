@@ -1,27 +1,25 @@
 
 #include <cassert>
 #include "UpdateReference.h"
-#include "gc/GCCollected.h"
-#include "gc/operations/GCOperation.h"
 #include "gc/collectors/BasicCollector.h"
-#include "gc/containers/GlobalCtx.h"
+#include "gc/containers/Enviroment.h"
 
 namespace gccpp::details {
-    void UpdateReference::do_it(BasicCollector *gc) {
-        auto& stacks = gc->context()->all_stacks();
+    std::size_t UpdateReference::do_it(BasicCollector *gc) {
+        auto& stacks = gc->context()->stacks;
 
-        for(auto&[_, stack]: stacks) {
-            for(std::size_t i = 0; i < stack.size(); i++) {
-                if (stack[i] == nullptr) {
+        stacks.visit([&](ThreadsStacks::element& pair) {
+            for(std::size_t i = 0; i < pair.second->size(); i++) {
+                auto root = pair.second->addr(i);
+                if (*root == nullptr) {
                     continue;
                 }
-                worklist.push(stack.addr(i));
+                worklist.push(root);
             }
-        }
+        });
 
         while (!worklist.empty()) {
-            auto top = worklist.top();
-            worklist.pop();
+            auto top = worklist.pop();
             if (*top == nullptr) {
                 continue;
             }
@@ -33,6 +31,7 @@ namespace gccpp::details {
             assert(top->mw()->forwarding_pointer != nullptr);
             top->update( top->mw()->forwarding_pointer);
         }
+        return 0;
     }
 
     void UpdateReference::trace(ObjectPointer &ptr) {

@@ -6,7 +6,7 @@
 namespace gccpp {
 
     void MarkAndSweepCollector::collect() {
-        details::Mark mark;
+        details::Mark mark(worklist);
         mark.do_it(this);
 
         details::Sweep sweep;
