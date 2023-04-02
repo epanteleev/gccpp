@@ -7,7 +7,7 @@ namespace gccpp::details {
         if (ptr == nullptr) {
             return;
         }
-        if (ptr.mw()->color == MarkWord::Color::Black) {
+        if (ptr.mw()->color() == MarkWord::Color::Black) {
             return;
         }
         gc->worklist.push(ptr);
@@ -30,10 +30,10 @@ namespace gccpp::details {
         while (!gc->worklist.empty()) {
             auto top = gc->worklist.pop();
 
-            if (top.mw()->color == MarkWord::Color::Black) {
+            if (top.mw()->color() == MarkWord::Color::Black) {
                 continue;
             }
-            top.mw()->color = MarkWord::Color::Black;
+            top.mw()->set_color(MarkWord::Color::Black);
 
             top.trace(this);
         }

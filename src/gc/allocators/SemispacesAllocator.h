@@ -14,8 +14,8 @@ namespace gccpp {
 
         ~SemispacesAllocator() override;
     public:
-        void* alloc(std::size_t size) override;
-        void free(void* addr) override;
+        void* alloc(std::size_t size) noexcept override;
+        void free(void* addr) noexcept override;
         void print(std::ostringstream &out) override;
 
     public:

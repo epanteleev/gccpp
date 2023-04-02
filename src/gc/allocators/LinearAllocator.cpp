@@ -1,5 +1,6 @@
-#include "LinearAllocator.h"
+#include "gc/allocators/LinearAllocator.h"
 #include "gc/containers/SpinLock.h"
+#include "gc/containers/Page.h"
 
 #include <cstdlib>
 #include <cstdio>
@@ -11,10 +12,10 @@
 
 namespace gccpp {
     LinearAllocator::~LinearAllocator() {
-       std::free(start_ptr);
+       Page::free(start_ptr, max_size);
     }
 
-    void *LinearAllocator::alloc(std::size_t size) {
+    void *LinearAllocator::alloc(std::size_t size) noexcept {
         const std::lock_guard<details::SpinLock> _l(lock);
 
         const std::size_t current_address = reinterpret_cast<std::size_t>(start_ptr) + offset;
@@ -32,7 +33,7 @@ namespace gccpp {
         return reinterpret_cast<void*>(current_address + sizeof(Chunk));
     }
 
-    void LinearAllocator::free(void *addr) {
+    void LinearAllocator::free(void *addr) noexcept {
         (void)(addr); //todo make special macros
         fprintf(stderr,"LinearAllocator::free is unreachable.\n");
         std::terminate();
@@ -40,10 +41,8 @@ namespace gccpp {
 
     LinearAllocator::LinearAllocator(std::size_t _max_size):
         max_size(align(_max_size)) {
-        start_ptr = std::aligned_alloc(sizeof(std::size_t), max_size);
-#ifndef NDEBUG
-        std::memset(start_ptr, 0, max_size); // for debugging
-#endif
+        start_ptr = Page::alloc(max_size);
+        assert(reinterpret_cast<std::size_t>(start_ptr) % 8 == 0);
     }
 
     void LinearAllocator::release() noexcept {

@@ -13,10 +13,10 @@ namespace gccpp::details {
         auto predicate = [&](void* addr) -> bool {
             assert(addr != nullptr);
             ObjectPointer oop(static_cast<MarkWord*>(addr));
-            if (oop.mw()->color == MarkWord::Color::White) {
+            if (oop.mw()->color() == MarkWord::Color::White) {
                 return true;
             } else {
-                oop.mw()->color = MarkWord::Color::White;
+                oop.mw()->set_color(MarkWord::Color::White);
                 return false;
             }
         };

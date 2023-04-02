@@ -29,16 +29,16 @@ namespace gccpp {
                 return;
             }
             *des = src;
-            if (des->mw()->color == MarkWord::Color::Black) {
+            if (des->mw()->color() == MarkWord::Color::Black) {
                 shade(src);
             }
         }
 
         void shade(const details::ObjectPointer& ptr) {
-            if (ptr.mw()->color == MarkWord::Color::Black) {
+            if (ptr.mw()->color() == MarkWord::Color::Black) {
                 return;
             }
-            ptr.mw()->color = MarkWord::Color::Black;
+            ptr.mw()->set_color(MarkWord::Color::Black);
             worklist.push(ptr);
         }
 

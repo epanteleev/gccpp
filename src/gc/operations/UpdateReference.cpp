@@ -23,13 +23,13 @@ namespace gccpp::details {
             if (*top == nullptr) {
                 continue;
             }
-            if (top->mw()->color != MarkWord::Color::Black) {
+            if (top->mw()->color() != MarkWord::Color::Black) {
                 continue;
             }
             top->trace(this);
 
-            assert(top->mw()->forwarding_pointer != nullptr);
-            top->update( top->mw()->forwarding_pointer);
+            assert(top->mw()->forwarding_ptr() != nullptr);
+            top->update( top->mw()->forwarding_ptr());
         }
         return 0;
     }

@@ -11,16 +11,13 @@ namespace gccpp::details {
         auto fn = [&](Chunk* header) {
             auto* mv = header->mw();
 
-            if (mv->color != MarkWord::Color::Black) {
+            if (mv->color() != MarkWord::Color::Black) {
                 return;
             }
             auto new_address = to_region->alloc(header->object_size());
-            if (new_address == nullptr) { //todo correct handle
-                fprintf(stderr, "Out of memory: ");
-                std::terminate();
-            }
-            assert(mv->forwarding_pointer == nullptr);
-            mv->forwarding_pointer = new_address;
+            assert(new_address != nullptr);
+            assert(mv->forwarding_ptr() == nullptr);
+            mv->set_forwarding_ptr(new_address);
         };
 
         allocator->active_space->visit(fn);

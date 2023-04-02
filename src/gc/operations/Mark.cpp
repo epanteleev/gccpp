@@ -22,10 +22,10 @@ namespace gccpp::details {
             auto top = *worklist.pop();
             assert(top != nullptr);
 
-            if (top.mw()->color == MarkWord::Color::Black) {
+            if (top.mw()->color() == MarkWord::Color::Black) {
                 continue;
             }
-            top.mw()->color = MarkWord::Color::Black;
+            top.mw()->set_color(MarkWord::Color::Black);
 
             top.trace(this);
         }

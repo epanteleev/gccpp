@@ -7,7 +7,7 @@ include_directories(src)
 
 set(CMAKE_CXX_FLAGS "-fno-strict-aliasing ")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -fsanitize=address -fsanitize=undefined ")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall -Wextra -Wpedantic -Werror ")
+set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O3 -Wall -Wextra -Wpedantic -Werror ")
 
 add_library(libgc STATIC
         src/pointer/Oop.h
@@ -66,10 +66,10 @@ add_library(libgc STATIC
         src/gc/containers/WorkerState.h
         src/gc/containers/ThreadSafepointState.cpp
         src/gc/containers/ThreadSafepointState.h
-        src/gc/containers/WaitBarrier.h)
+        src/gc/containers/WaitBarrier.h src/gc/containers/Page.cpp src/gc/containers/Page.h)
 
 
-set(DATA_STRUCTURES src/struct/String.h src/struct/Array.h src/struct/Vector.h src/struct/SizeT.h src/struct/Pair.h example/UnmanagedHashMap.h example/ManagedHashMap.h)
+set(DATA_STRUCTURES src/struct/String.h src/struct/Array.h src/struct/Vector.h src/struct/SizeT.h src/struct/Pair.h example/UnmanagedHashMap.h example/ManagedHashMap.h src/macros.h)
 
 add_executable(count example/count.cpp ${DATA_STRUCTURES})
 target_link_libraries(count PRIVATE libgc)

@@ -10,11 +10,11 @@ namespace gccpp {
         delete free_space;
     }
 
-    void *SemispacesAllocator::alloc(std::size_t size) {
+    void *SemispacesAllocator::alloc(std::size_t size) noexcept {
         return active_space->alloc(size);
     }
 
-    void SemispacesAllocator::free(void *addr) {
+    void SemispacesAllocator::free(void *addr) noexcept {
         (void)(addr); //todo
         printf("SemispacesAllocator::free is unreachable.\n");
         std::terminate();

@@ -5,6 +5,7 @@
 #include "gc/collectors/MarkAndCompactCollector.h"
 #include "utils/Objects.h"
 #include "gc/containers/Enviroment.h"
+#include "struct/Array.h"
 
 class GCTest : public testing::TestWithParam<std::string> {
 public:
@@ -12,9 +13,9 @@ public:
         auto testparam = GetParam();
         std::unique_ptr<gccpp::BasicCollector> gc;
         if (testparam == "markAndSweep") {
-            gc = std::make_unique<gccpp::MarkAndSweepCollector>(1024);
+            gc = std::make_unique<gccpp::MarkAndSweepCollector>(4096 * 10);
         } else if (testparam == "markAndCompact") {
-            gc = std::make_unique<gccpp::MarkAndCompactCollector>(1024);
+            gc = std::make_unique<gccpp::MarkAndCompactCollector>(4096 * 10);
         } else {
             assert(false); //todo
         }
@@ -88,6 +89,47 @@ TEST_P(GCTest, ref_leak_from_thread) {
 
     ASSERT_EQ(leak->x, 2);
     ASSERT_EQ(leak->y, 3);
+}
+
+TEST_P(GCTest, fill_array) {
+    gccpp::ThreadEnv _th(*ctx);
+    gccpp::HandleMark fr;
+
+    std::size_t size = 128;
+    gccpp::Handle<Array<Point>> array(Array<Point>::make(size));
+
+    auto work = [&] {
+        gccpp::ThreadEnv _th(*ctx);
+        gccpp::HandleMark fr;
+
+        ctx->force_gc();
+
+        for (std::size_t i = 64; i < size; i++) {
+            auto point = ctx->alloc<Point>(i, 3);
+            array->at(i) = point;
+        }
+        ctx->force_gc();
+    };
+
+    std::thread thread(work);
+
+    for (std::size_t i = 0; i < 64; i++) {
+        auto point = ctx->alloc<Point>(i, 3);
+        array->at(i) = point;
+    }
+
+    ctx->unmanaged_context([&] {
+        thread.join();
+    });
+
+    ctx->force_gc();
+    for (std::size_t i = 0; i < size; i++) {
+        ASSERT_EQ(i, array->at(i)->x);
+    }
+    ctx->force_gc();
+    for (std::size_t i = 0; i < size; i++) {
+        ASSERT_EQ(i, array->at(i)->x);
+    }
 }
 
 INSTANTIATE_TEST_SUITE_P(Multithread,

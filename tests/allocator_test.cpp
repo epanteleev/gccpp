@@ -108,6 +108,18 @@ TEST(alloc_info, creation) {
     delete foo;
 }
 
+TEST(markword, set_get_fields) {
+    auto ptr = new int[10];
+    gccpp::MarkWord mw;
+    mw.set_color(gccpp::MarkWord::Color::Black);
+    ASSERT_EQ(mw.color(), gccpp::MarkWord::Color::Black);
+
+    mw.set_forwarding_ptr(ptr);
+    ASSERT_EQ(mw.color(), gccpp::MarkWord::Color::Black);
+    ASSERT_EQ(mw.forwarding_ptr(), ptr);
+    delete[] ptr;
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

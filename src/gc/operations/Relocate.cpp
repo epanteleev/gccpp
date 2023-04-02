@@ -12,16 +12,16 @@ namespace gccpp::details {
         auto fn = [&](Chunk* header) -> void {
             auto* mw = header->mw();
 
-            if (mw->color != MarkWord::Color::Black) {
+            if (mw->color() != MarkWord::Color::Black) {
                 return;
             }
-            auto new_address = static_cast<MarkWord*>(mw->forwarding_pointer);
+            auto new_address = static_cast<MarkWord*>(mw->forwarding_ptr());
             assert(new_address != nullptr);
 
             std::memcpy(new_address, mw, header->object_size());
 
-            new_address->color = MarkWord::Color::White;
-            new_address->forwarding_pointer = nullptr;
+            new_address->set_color(MarkWord::Color::White);
+            new_address->set_forwarding_ptr(nullptr);
         };
         allocator->active_space->visit(fn);
 
