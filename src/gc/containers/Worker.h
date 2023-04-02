@@ -12,7 +12,7 @@ namespace gccpp::details {
                 ctx(_ctx),
                 worker(run, std::ref(*this)) {}
 
-        ~Worker();
+        ~Worker() = default;
     public:
         Worker(Worker&) = delete;
         Worker operator=(Worker&) = delete;
@@ -22,6 +22,7 @@ namespace gccpp::details {
         void start();
         void collect();
 
+        void continue_mutators();
     public:
         bool is_terminate();
 

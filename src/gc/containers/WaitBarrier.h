@@ -12,7 +12,7 @@ public:
     }
 
     inline void notify() noexcept {
-        cv.notify_one();
+        cv.notify_all();
     }
 private:
     std::condition_variable cv;

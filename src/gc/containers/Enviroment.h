@@ -31,7 +31,9 @@ namespace gccpp {
     public:
         explicit Enviroment(std::unique_ptr<BasicCollector> _gc);
 
-        ~Enviroment() = default;
+        ~Enviroment() {
+            worker.stop();
+        }
     public:
         template<gccpp::GarbageCollectedType T, typename... Args>
         static inline gccpp::Oop<T> init_object(gccpp::Oop<T> oop, Args... args) {

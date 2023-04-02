@@ -17,32 +17,22 @@ namespace gccpp::details {
 
     public:
         bool wait_start() {
-            while (mode != Mode::Started) {
-                if (mode == Mode::Collection) {
-                    return false;
-                }
-                if (mode == Mode::Terminate) {
-                    return true;
-                }
-                std::this_thread::yield();
-            }
+            barrier.wait([&] {
+                return mode == Mode::Started || mode == Mode::Collection || mode == Mode::Terminate;
+            });
             return false;
         }
 
-        bool wait_collect_command() {
-            while (mode != Mode::Collection) {
-                if (mode == Mode::Terminate) {
-                    return true;
-                }
-                std::this_thread::yield();
-            }
-            return false;
+        void wait_collect_command() {
+            barrier.wait([&] {
+                return mode == Mode::Collection || mode == Mode::Terminate;
+            });
         }
 
         void wait_collect_ending() {
-            while (mode == Mode::Collection) {
-                std::this_thread::yield();
-            }
+            barrier.wait([&] {
+                return mode == Mode::Started;
+            });
         }
 
         bool is_terminate() {
@@ -59,14 +49,22 @@ namespace gccpp::details {
 
         void collect() {
             mode.store(Mode::Collection);
+            barrier.notify();
         }
 
         void start() {
             mode.store(Mode::Started);
+            barrier.notify();
+        }
+
+        void mutators_continue() {
+            mode.store(Mode::Started);
+            barrier.notify();
         }
 
         void terminate() {
             mode.store(Mode::Terminate);
+            barrier.notify();
         }
 
     private:

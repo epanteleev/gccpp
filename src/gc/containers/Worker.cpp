@@ -5,7 +5,9 @@
 namespace gccpp::details {
 
     void Worker::run(details::Worker& self) noexcept {
-        if (self.ctx.state.wait_start()) {
+        self.ctx.state.wait_start();
+
+        if (self.is_terminate()) {
             return;
         }
 
@@ -21,8 +23,8 @@ namespace gccpp::details {
             self.ctx.self_suspend = false;
             details::mem::write_barrier();
             self.ctx.global_lock.run_world();
-            self.start(); //todo
-            std::this_thread::yield();
+            self.ctx.state.mutators_continue();
+
         }
     }
 
@@ -44,15 +46,13 @@ namespace gccpp::details {
     }
 
     bool Worker::wait_job() {
-        if (ctx.state.wait_collect_command()) {
+        ctx.state.wait_collect_command();
+
+        if (ctx.state.is_terminate()) {
             return true;
         }
         ctx.self_suspend = true;
         details::mem::write_barrier();
         return false;
-    }
-
-    Worker::~Worker() {
-        stop();
     }
 }
