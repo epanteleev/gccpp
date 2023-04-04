@@ -11,7 +11,7 @@
 namespace gccpp {
     template<typename T>
     class Buffer final {
-        static constexpr std::size_t INITIAL_SIZE = 4096;
+        static constexpr std::size_t INITIAL_SIZE = 512;
         static constexpr std::size_t RATIO = 2;
 
     public:

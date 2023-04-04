@@ -1,14 +1,12 @@
 #pragma once
 #include <cstddef>
+#include <cassert>
 #include "macros.h"
 
 
 namespace gccpp {
     //Todo special mw for particular BasicCollector algo.
     class MarkWord final {
-        static constexpr std::size_t COLOR_MASK = 0xFF000000'00000000;
-        static constexpr std::size_t FRDPTR_MASK = ~COLOR_MASK;
-
     public:
         enum class Color : unsigned char {
             White,
@@ -16,7 +14,7 @@ namespace gccpp {
         };
 
     public:
-        MarkWord() {}
+        MarkWord() = default;
         ~MarkWord() = default;
 
         [[nodiscard]]
@@ -26,7 +24,7 @@ namespace gccpp {
 
     public:
         always_inline void set_color(Color new_color) {
-            m_color = static_cast<unsigned char>(new_color);
+            m_color = new_color;
         }
 
         always_inline void set_forwarding_ptr(void* new_fp) {
@@ -44,9 +42,9 @@ namespace gccpp {
         }
 
     private:
-        unsigned char m_color{};
-        unsigned long forwarding_pointer:56{};
+        Color m_color{};
+        unsigned long forwarding_pointer{};
     };
 
-    static_assert(sizeof(MarkWord) == sizeof(void *), "too large for small allocation");
+    static_assert(sizeof(MarkWord) == 2 * sizeof(void *), "too large for small allocation");
 }

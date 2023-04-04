@@ -29,7 +29,7 @@ namespace gccpp::details {
             top->trace(this);
 
             assert(top->mw()->forwarding_ptr() != nullptr);
-            top->update( top->mw()->forwarding_ptr());
+            top->update(top->mw()->forwarding_ptr());
         }
         return 0;
     }

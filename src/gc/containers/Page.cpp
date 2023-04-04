@@ -2,6 +2,7 @@
 #include <sys/mman.h>
 #include <cstdio>
 #include <exception>
+#include <cassert>
 
 void *Page::alloc(std::size_t size) noexcept {
     void* page = mmap(nullptr, size, PROT_READ | PROT_WRITE | PROT_EXEC,
@@ -14,7 +15,7 @@ void *Page::alloc(std::size_t size) noexcept {
 }
 
 void *Page::realloc(void *old_addr, std::size_t old_size, std::size_t new_size) noexcept {
-    void *p = mremap(old_addr, old_size, new_size, MREMAP_MAYMOVE | MREMAP_FIXED);
+    void *p = mremap(old_addr, old_size, new_size, MREMAP_MAYMOVE);
     if (p == MAP_FAILED) {
         std::fprintf(stderr, "mremap failed: old_addr=%p, old_size=%zu, new_size=%zu", old_addr, old_size, new_size);
         perror(" cause: ");
