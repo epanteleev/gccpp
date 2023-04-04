@@ -1,7 +1,7 @@
 #pragma once
 
 #include <gtest/gtest.h>
-#include "utils/GCTest.h"
+#include "../utils/GCTest.h"
 
 TEST_P(GCTest, two_threads) {
     gccpp::ThreadEnv _th(*ctx);

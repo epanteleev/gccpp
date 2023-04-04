@@ -28,12 +28,7 @@ public:
     }
 
 public:
-    static gccpp::Oop<Line> createLine(gccpp::Enviroment &ctx) {
-        auto point1 = ctx.alloc<Point>(2, 3);
-        auto point2 = ctx.alloc<Point>(20, 30);
-        auto root = ctx.alloc<Line>(point1, point2);
-        return root;
-    }
+    static gccpp::Oop<Line> createLine(gccpp::Enviroment &ctx);
 
 public:
     gccpp::Oop<Point> a;

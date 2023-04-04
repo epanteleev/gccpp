@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utils/GCTest.h"
+#include "../utils/GCTest.h"
 
 TEST_P(GCTest, creation) {
     gccpp::ThreadEnv _th(*ctx);
