@@ -1,3 +1,4 @@
+#pragma once
 #include <gtest/gtest.h>
 #include "gc/allocators/LinearAllocator.h"
 #include "gc/allocators/MallocBasedAllocator.h"
@@ -118,9 +119,4 @@ TEST(markword, set_get_fields) {
     ASSERT_EQ(mw.color(), gccpp::MarkWord::Color::Black);
     ASSERT_EQ(mw.forwarding_ptr(), ptr);
     delete[] ptr;
-}
-
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }

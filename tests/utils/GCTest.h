@@ -1,0 +1,8 @@
+//
+// Created by user on 04.04.23.
+//
+
+#ifndef CPP_GARBAGE_COLLECTOR_GCTEST_H
+#define CPP_GARBAGE_COLLECTOR_GCTEST_H
+
+#endif //CPP_GARBAGE_COLLECTOR_GCTEST_H

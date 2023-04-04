@@ -1,30 +1,6 @@
-#include <gtest/gtest.h>
+#pragma once
 
-#include "pointer/Oop.h"
-#include "gc/collectors/MarkAndSweepCollector.h"
-#include "gc/collectors/MarkAndCompactCollector.h"
-#include "utils/Objects.h"
-#include "gc/containers/Enviroment.h"
-
-class GCTest : public testing::TestWithParam<std::string> {
-public:
-    void SetUp() override {
-        auto testparam = GetParam();
-        std::unique_ptr<gccpp::BasicCollector> gc;
-        if (testparam == "markAndSweep") {
-            gc = std::make_unique<gccpp::MarkAndSweepCollector>(1024);
-        } else if (testparam == "markAndCompact") {
-            gc = std::make_unique<gccpp::MarkAndCompactCollector>(1024);
-        } else {
-            assert(false); //todo
-        }
-        gccpp::Enviroment::init(std::move(gc));
-        ctx = &gccpp::Enviroment::context();
-    }
-
-protected:
-    gccpp::Enviroment* ctx;
-};
+#include "utils/GCTest.h"
 
 TEST_P(GCTest, creation) {
     gccpp::ThreadEnv _th(*ctx);
@@ -205,8 +181,3 @@ TEST_P(GCTest, loop_references) {
 INSTANTIATE_TEST_SUITE_P(gc_testing,
                          GCTest,
                          testing::Values("markAndSweep", "markAndCompact"));
-
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
