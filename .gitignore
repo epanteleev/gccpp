@@ -33,3 +33,4 @@
 
 #Clion output dirs
 cmake-*
+.idea
