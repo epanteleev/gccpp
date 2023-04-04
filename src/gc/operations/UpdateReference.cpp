@@ -30,6 +30,7 @@ namespace gccpp::details {
 
             assert(top->mw()->forwarding_ptr() != nullptr);
             top->update(top->mw()->forwarding_ptr());
+            top->mw()->set_color(MarkWord::Color::White);
         }
         return 0;
     }
