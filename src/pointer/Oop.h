@@ -25,7 +25,7 @@ namespace gccpp {
 
         Oop(const Oop &r): ObjectPointer(r.p) {}
 
-        Oop(Handle<T> &r);
+        Oop(const Handle<T> &r);
 
         Oop(Oop &&r) noexcept:
                 ObjectPointer(std::exchange(r.p, nullptr)) {}

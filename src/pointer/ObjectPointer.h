@@ -1,6 +1,7 @@
 #pragma once
 #include "gc/MarkWord.h"
 #include "gc/GarbageCollected.h"
+#include "macros.h"
 
 namespace gccpp::details {
 
@@ -14,11 +15,11 @@ namespace gccpp::details {
         ObjectPointer(const ObjectPointer& ptr) : p(ptr.mw()) {}
     public:
         [[nodiscard]]
-        MarkWord* mw() const noexcept {
-            return p; //Todo
+        always_inline MarkWord* mw() const noexcept {
+            return p;
         }
 
-        void update(void* address) noexcept {
+        always_inline void update(void* address) noexcept {
             p = static_cast<MarkWord*>(address);
         }
     public:

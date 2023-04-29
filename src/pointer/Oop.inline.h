@@ -6,7 +6,7 @@
 
 namespace gccpp {
     template<typename T>
-    Oop<T>::Oop(Handle<T> &r) : ObjectPointer(r.oop()) {}
+    Oop<T>::Oop(const Handle<T> &r) : ObjectPointer(r.oop()) {}
 
     template<typename T>
     Oop<T> &Oop<T>::operator=(Handle<T> &r) noexcept {
@@ -71,6 +71,12 @@ namespace gccpp {
     Handle<T> &Handle<T>::operator=(Oop<T> ptr) {
         //Enviroment::collector()->write_barrier(oop_ptr, ptr);
         *oop_ptr = ptr;
+        return *this;
+    }
+
+    template<typename T>
+    Handle<T> &Handle<T>::operator=(const Handle<T>& ptr) {
+        *oop_ptr = *ptr.oop_ptr;
         return *this;
     }
 

@@ -25,10 +25,10 @@ void *Page::realloc(void *old_addr, std::size_t old_size, std::size_t new_size) 
     return p;
 }
 
-void Page::free(void *old_addr, std::size_t size) noexcept {
-    int ret = munmap(old_addr, size);
+void Page::free(void *addr, std::size_t size) noexcept {
+    int ret = munmap(addr, size);
     if (ret == -1) {
-        std::fprintf(stderr, "munmap failed: old_addr=%p, old_size=%zul ", old_addr, size);
+        std::fprintf(stderr, "munmap failed: old_addr=%p, old_size=%zul ", addr, size);
         perror("cause: ");
         std::terminate();
     }

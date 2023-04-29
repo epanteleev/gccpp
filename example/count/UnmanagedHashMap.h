@@ -105,18 +105,14 @@ namespace unmanaged {
                 return nullptr;
             }
             auto hash = std::hash<Key>()(*key);
-            Node* node = table->at((table->size() - 1) & hash);
-            if (node == nullptr) {
-                return nullptr;
-            }
-
-            while (node->hash != hash || (*node->key) != (*key)) {
-                node = node->next;
-                if (node == nullptr) {
-                    return nullptr;
+            auto node = table->at((table->size() - 1) & hash);
+            while (node != nullptr) {
+                if (node->hash == hash && !((*node->key) != (*key))) {
+                    return node->value;
                 }
+                node = node->next;
             }
-            return node->value;
+            return nullptr;
         }
 
         HashMapIterator<Key, Value>* iterator() {

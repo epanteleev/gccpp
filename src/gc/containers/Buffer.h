@@ -8,7 +8,7 @@
 #include "pointer/ObjectPointer.h"
 #include "gc/containers/Page.h"
 
-namespace gccpp {
+namespace gccpp::details {
     template<typename T>
     class Buffer final {
         static constexpr std::size_t INITIAL_SIZE = 512;
@@ -44,6 +44,15 @@ namespace gccpp {
             auto back = buffer[current_size - 1];
             current_size -= 1;
             return back;
+        }
+
+        inline T& operator[](std::size_t idx) const {
+            return buffer[idx];
+        }
+
+        inline void trunc(std::size_t to_size) noexcept {
+            assert(to_size <= current_size);
+            current_size = to_size;
         }
     private:
         void resize() {

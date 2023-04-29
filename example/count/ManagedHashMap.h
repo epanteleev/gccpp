@@ -68,12 +68,6 @@ namespace managed {
                     value(_value),
                     hash(_hash) {}
 
-            ~Node() {
-                if (next != nullptr) {
-                    delete next;
-                }
-            }
-
             void trace(gccpp::GCOperation *operation) noexcept override {
                 operation->trace(key);
                 operation->trace(value);
@@ -95,12 +89,6 @@ namespace managed {
         explicit HashMap(gccpp::Oop<Array<Node>> _table):
             table(_table) {}
 
-        ~HashMap() {
-            for (auto el: *table) {
-                delete el;
-            }
-            delete table;
-        }
     public:
         void put(gccpp::Oop<Key> key, gccpp::Oop<Value> value) {
             gccpp::HandleMark hm;
@@ -133,17 +121,13 @@ namespace managed {
             }
             auto hash = std::hash<Key>()(*key);
             auto node = table->at((table->length() - 1) & hash);
-            if (node == nullptr) {
-                return nullptr;
-            }
-
-            while (node->hash != hash || (*node->key) != (*key)) {
-                node = node->next;
-                if (node == nullptr) {
-                    return nullptr;
+            while (node != nullptr) {
+                if (node->hash == hash && !((*node->key) != (*key))) {
+                    return node->value;
                 }
+                node = node->next;
             }
-            return node->value;
+            return nullptr;
         }
 
         gccpp::Oop<HashMapIterator<Key, Value>> iterator() {

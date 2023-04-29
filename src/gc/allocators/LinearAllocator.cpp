@@ -1,6 +1,7 @@
 #include "gc/allocators/LinearAllocator.h"
 #include "gc/containers/SpinLock.h"
 #include "gc/containers/Page.h"
+#include "gc/containers/Memory.h"
 
 #include <cstdlib>
 #include <cstdio>
@@ -19,12 +20,13 @@ namespace gccpp {
         const std::lock_guard<details::SpinLock> _l(lock);
 
         const std::size_t current_address = reinterpret_cast<std::size_t>(start_ptr) + offset;
-        const std::size_t aligned_size = align(size + sizeof(Chunk));
+        const std::size_t aligned_size = details::mem::align(size + sizeof(Chunk));
         if (aligned_size + offset > max_size) {
             return nullptr;
         }
         auto* header = reinterpret_cast<Chunk*>(current_address);
         header->magic = MAGIC;
+
         assert(std::in_range<int>(aligned_size));
         header->chunk_size = static_cast<int>(aligned_size);
 
@@ -40,7 +42,7 @@ namespace gccpp {
     }
 
     LinearAllocator::LinearAllocator(std::size_t _max_size):
-        max_size(align(_max_size)) {
+        max_size(details::mem::align(_max_size)) {
         start_ptr = Page::alloc(max_size);
         assert(reinterpret_cast<std::size_t>(start_ptr) % 8 == 0);
     }
@@ -56,8 +58,7 @@ namespace gccpp {
     bool LinearAllocator::contains(void *object_address) const noexcept {
         const auto end = reinterpret_cast<void*>(reinterpret_cast<std::size_t>(start_ptr) + offset);
 #ifndef NDEBUG
-        auto* header = reinterpret_cast<Chunk*>(reinterpret_cast<size_t>(object_address) - sizeof(Chunk));
-        assert(header->magic == MAGIC);
+        LinearAllocator::header(object_address);
 #endif
         return start_ptr <= object_address && object_address < end;
     }

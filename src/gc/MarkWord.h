@@ -1,12 +1,14 @@
 #pragma once
 #include <cstddef>
 #include <cassert>
+#include <cstring>
 #include "macros.h"
 
 
 namespace gccpp {
     //Todo special mw for particular BasicCollector algo.
     class MarkWord final {
+        static constexpr std::size_t FWD_MASK = 0xFFFF0000'00000000;
     public:
         enum class Color : unsigned char {
             White,
@@ -28,7 +30,8 @@ namespace gccpp {
         }
 
         always_inline void set_forwarding_ptr(void* new_fp) {
-            forwarding_pointer = reinterpret_cast<unsigned long>(new_fp);
+            assert((reinterpret_cast<std::size_t>(new_fp) & FWD_MASK) == 0);
+            std::memcpy(&forwarding_pointer, &new_fp, 7);
         }
 
         [[nodiscard]]
@@ -38,13 +41,16 @@ namespace gccpp {
 
         [[nodiscard]]
         always_inline void* forwarding_ptr() const {
-            return reinterpret_cast<void*>(forwarding_pointer);
+            // Todo for ARM64 (???): return *reinterpret_cast<void**>(const_cast<MarkWord*>(this));
+            void* ret{};
+            std::memcpy(&ret, &forwarding_pointer, 7);
+            return ret;
         }
 
     private:
         Color m_color{};
-        unsigned long forwarding_pointer{};
+        char forwarding_pointer[7]{};
     };
 
-    static_assert(sizeof(MarkWord) == 2 * sizeof(void *), "too large for small allocation");
+    static_assert(sizeof(MarkWord) == sizeof(void *), "too large for small allocation");
 }

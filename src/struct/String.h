@@ -65,7 +65,7 @@ public:
 
 private:
     std::size_t len;
-    char data[1];
+    char data[1]{};
 };
 
 namespace std {

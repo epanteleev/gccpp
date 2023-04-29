@@ -9,12 +9,12 @@
 template<gccpp::GarbageCollectedType T, gccpp::GarbageCollectedType U>
 class Pair : public gccpp::GarbageCollected {
 public:
-    Pair(gccpp::Oop<T> _first, gccpp::Oop<U> _second):
+    Pair(const gccpp::Handle<T>& _first, const gccpp::Handle<U>& _second):
         first(_first),
         second(_second) {}
 
 public:
-    static gccpp::Oop<Pair> make(gccpp::Oop<T> _first, gccpp::Oop<U> _second) {
+    static gccpp::Oop<Pair> make(const gccpp::Handle<T>& _first, const gccpp::Oop<U> _second) {
         return gccpp::Enviroment::context().alloc<Pair>(_first, _second);
     }
 

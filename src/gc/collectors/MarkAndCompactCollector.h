@@ -26,6 +26,6 @@ namespace gccpp {
     public:
         void collect() override;
     private:
-        Buffer<details::ObjectPointer*> worklist{};
+        details::Buffer<details::ObjectPointer*> worklist{};
     };
 }

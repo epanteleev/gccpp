@@ -44,7 +44,7 @@ namespace gccpp {
 
         void collect() override;
     private:
-        Buffer<details::ObjectPointer> worklist;
+        details::Buffer<details::ObjectPointer> worklist;
         Mode mode{};
     };
 }

@@ -2,14 +2,13 @@
 #include <array>
 #include <stack>
 #include "pointer/ObjectPointer.h"
+#include "Buffer.h"
 
 namespace gccpp::details {
     class ShadowStack final {
     public:
         using size_type = std::size_t;
-        using iterator = ObjectPointer*;
-    private:
-        static constexpr size_type MAX_STACK_SIZE = 2048;
+
     public:
         ShadowStack() = default;
         ~ShadowStack() = default;
@@ -22,6 +21,7 @@ namespace gccpp::details {
 
         void leave(size_type saved_sp) noexcept {
             sp = saved_sp;
+            stack.trunc(saved_sp);
         }
 
         ObjectPointer* push(const ObjectPointer& ptr);
@@ -42,6 +42,6 @@ namespace gccpp::details {
         }
     private:
         size_type sp{};
-        std::array<ObjectPointer, MAX_STACK_SIZE> stack;
+        Buffer<ObjectPointer> stack;
     };
 }

@@ -26,12 +26,15 @@ public:
     }
 
     void push_back(gccpp::Oop<T> elem) {
-        if (count == data->length()) {
+        gccpp::HandleMark hm;
+        gccpp::Handle h_self = gccpp::Oop<Vector>::from(this);
+        gccpp::Handle h_elem = elem;
+        if (h_self->count == h_self->data->length()) {
             resize();
         }
-        assert(count < data->length());
-        data->at(count) = elem;
-        count += 1;
+        assert(h_self->count < h_self->data->length());
+        h_self->data->at(h_self->count) = h_elem;
+        h_self->count += 1;
     }
 
     void trace(gccpp::GCOperation *operation) noexcept override {
@@ -40,7 +43,15 @@ public:
 
 private:
     void resize() noexcept {
-        resize_static(gccpp::Oop<Vector>::from(this));
+        gccpp::Handle hm_self(gccpp::Oop<Vector>::from(this));
+
+        std::size_t new_size = hm_self->data->length() * RESIZE_RATIO;
+        auto new_array = Array<T>::make(new_size);
+        if (!hm_self->data->copy_to(new_array)) {
+            fprintf(stderr, "array copy error\n");
+            std::terminate(); //todo
+        }
+        hm_self->data = new_array;
     }
 
 public:
@@ -63,20 +74,6 @@ public:
                 }
             }
         }
-    }
-
-private:
-    static void resize_static(gccpp::Oop<Vector> self) {
-        gccpp::HandleMark hm;
-        gccpp::Handle hm_self(self);
-
-        std::size_t new_size = hm_self->data->length() * RESIZE_RATIO;
-        auto new_array = Array<T>::make(new_size);
-        if (!hm_self->data->copy_to(new_array)) {
-            fprintf(stderr, "array copy error\n");
-            std::terminate(); //todo
-        }
-        hm_self->data = new_array;
     }
 
 private:

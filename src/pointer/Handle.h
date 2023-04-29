@@ -21,8 +21,8 @@ namespace gccpp {
         using reference = T *;
 
     public:
-        explicit Handle(const details::ObjectPointer &oop);
-        explicit Handle(const Oop<T> &oop);
+        Handle(const details::ObjectPointer &oop);
+        Handle(const Oop<T> &oop);
 
     public:
         explicit operator bool() const;
@@ -35,8 +35,8 @@ namespace gccpp {
         details::ObjectPointer oop() const;
 
     public:
-        Handle &operator=(Oop<T> ptr);
-
+        Handle<T> &operator=(Oop<T> ptr);
+        Handle<T> &operator=(const Handle<T>& ptr);
     private:
         details::ObjectPointer* oop_ptr;
     };

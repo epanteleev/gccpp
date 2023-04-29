@@ -11,7 +11,9 @@ namespace gccpp {
     public:
         [[nodiscard]]
         inline std::size_t object_size() const {
-            return chunk_size - sizeof(Chunk);
+            auto actual_size = chunk_size - sizeof(Chunk);
+            assert(actual_size > 0);
+            return actual_size;
         }
 
         inline MarkWord* mw() {
@@ -43,9 +45,6 @@ namespace gccpp {
         void visit(const std::function<void(Chunk*)>& fn) noexcept;
 
     public:
-        static std::size_t align(std::size_t value) noexcept {
-            return ((value + 7) / 8) * 8;
-        }
 
         static Chunk* header(const void* object_address) noexcept;
     private:
