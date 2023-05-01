@@ -11,13 +11,19 @@ namespace gccpp {
     }
 
     void *SemispacesAllocator::alloc(std::size_t size) noexcept {
+//        if (size <= 32) {
+//            auto addr = small_allocator32.alloc();
+//            if (addr != nullptr) {
+//                return addr;
+//            }
+//        }
+//        else if (size < 64) {
+//            auto addr = small_allocator64.alloc();
+//            if (addr != nullptr) {
+//                return addr;
+//            }
+//        }
         return active_space->alloc(size);
-    }
-
-    void SemispacesAllocator::free(void *addr) noexcept {
-        (void)(addr); //todo
-        printf("SemispacesAllocator::free is unreachable.\n");
-        std::terminate();
     }
 
     void SemispacesAllocator::print(std::ostringstream &out) {

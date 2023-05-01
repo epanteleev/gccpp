@@ -31,8 +31,8 @@ add_library(libgc STATIC
     src/gc/collectors/BasicCollector.h
     src/gc/allocators/MallocBasedAllocator.cpp
     src/gc/allocators/MallocBasedAllocator.h
-    src/gc/allocators/LinearAllocator.cpp
-    src/gc/allocators/LinearAllocator.h
+    src/gc/allocators/details/LinearAllocator.cpp
+    src/gc/allocators/details/LinearAllocator.h
     src/gc/allocators/SemispacesAllocator.cpp
     src/gc/allocators/SemispacesAllocator.h
     src/gc/operations/UpdateReference.cpp
@@ -68,7 +68,8 @@ add_library(libgc STATIC
     src/gc/containers/WaitBarrier.h
     src/gc/containers/Page.cpp
     src/gc/containers/Page.h
-        )
+    src/gc/allocators/details/FixedSizeAllocator.h
+)
 
 
 set(DATA_STRUCTURES

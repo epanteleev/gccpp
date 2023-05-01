@@ -1,7 +1,39 @@
 #pragma once
 #include <gtest/gtest.h>
-#include "gc/allocators/LinearAllocator.h"
+#include "gc/allocators/details/LinearAllocator.h"
 #include "gc/allocators/MallocBasedAllocator.h"
+#include "gc/allocators/details/FixedSizeAllocator.h"
+
+TEST(fixedsize_allocation, allocation0) {
+    gccpp::details::FixedSizeAllocator<64> allocator(64);
+    ASSERT_EQ(allocator.allocation_count(), 0);
+
+    auto first = allocator.alloc();
+    ASSERT_NE(first, nullptr);
+    ASSERT_TRUE(allocator.contains(first));
+    ASSERT_EQ(allocator.allocation_count(), 1);
+
+    allocator.visit([&](void* addr) {
+        ASSERT_EQ(addr, first);
+    });
+}
+
+TEST(fixedsize_allocation, allocation1) {
+    gccpp::details::FixedSizeAllocator<8> allocator(64);
+    std::vector<void*> vec;
+
+    for (auto i = 0; i < 8; i++) {
+        vec.emplace_back(allocator.alloc());
+    }
+
+    std::size_t idx = 0;
+    allocator.visit([&](void* addr) {
+        ASSERT_EQ(addr, vec[idx]);
+        idx += 1;
+    });
+
+    ASSERT_EQ(allocator.allocation_count(), 8);
+}
 
 TEST(linear_allocation, creation) {
     gccpp::LinearAllocator allocator(64);

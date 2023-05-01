@@ -1,4 +1,4 @@
-#include "gc/allocators/LinearAllocator.h"
+#include "LinearAllocator.h"
 #include "gc/containers/SpinLock.h"
 #include "gc/containers/Page.h"
 #include "gc/containers/Memory.h"
@@ -33,12 +33,6 @@ namespace gccpp {
         offset += aligned_size;
         allocation_count += 1;
         return reinterpret_cast<void*>(current_address + sizeof(Chunk));
-    }
-
-    void LinearAllocator::free(void *addr) noexcept {
-        (void)(addr); //todo make special macros
-        fprintf(stderr,"LinearAllocator::free is unreachable.\n");
-        std::terminate();
     }
 
     LinearAllocator::LinearAllocator(std::size_t _max_size):

@@ -79,7 +79,7 @@ namespace gccpp {
 
     public:
         void* alloc(std::size_t size) noexcept override;
-        void free(void* addr) noexcept override;
+        void free(void* addr) noexcept;
         void print(std::ostringstream& out) override;
 
         malloc_based::AllocationStat& alloc_stat() {

@@ -26,11 +26,13 @@ namespace gccpp::details {
             if (top->mw()->color() != MarkWord::Color::Black) {
                 continue;
             }
+            top->mw()->set_color(MarkWord::Color::White);
             top->trace(this);
 
-            assert(top->mw()->forwarding_ptr() != nullptr);
+            if (top->mw()->forwarding_ptr() == nullptr) {
+                continue;
+            }
             top->update(top->mw()->forwarding_ptr());
-            top->mw()->set_color(MarkWord::Color::White);
         }
         return 0;
     }

@@ -21,6 +21,43 @@ namespace gccpp::details {
         };
 
         allocator->active_space->visit(fn);
+
+//        auto begin = reinterpret_cast<std::size_t>(allocator->small_allocator32.start_ptr);
+//        auto end = begin + allocator->small_allocator32.offset;
+//        auto current = begin;
+//
+//        auto next_free_slot = [&](std::size_t current) {
+//            auto object = reinterpret_cast<MarkWord*>(current);
+//            while (object->color() != MarkWord::Color::White) {
+//                current += 32;
+//                object = reinterpret_cast<MarkWord*>(current);
+//            }
+//            return current;
+//        };
+//
+//        auto next_dirty_slot = [&](std::size_t current) {
+//            auto object = reinterpret_cast<MarkWord*>(current);
+//            while (object->color() != MarkWord::Color::Black) {
+//                current -= 32;
+//                object = reinterpret_cast<MarkWord*>(current);
+//            }
+//            return current;
+//        };
+//
+//        if (begin >= end) {
+//            return 0;
+//        }
+//        auto freed = next_free_slot(current);
+//        auto dirty = next_dirty_slot(end - 32);
+//
+//        while (freed < dirty) {
+//            std::memcpy(reinterpret_cast<void*>(freed), reinterpret_cast<void*>(dirty), 32);
+//
+//            auto mv_dirty = reinterpret_cast<MarkWord*>(dirty);
+//            mv_dirty->set_forwarding_ptr(reinterpret_cast<void*>(freed));
+//            freed = next_free_slot(freed);
+//            dirty = next_dirty_slot(dirty);
+//        }
         return 0;
     }
 }

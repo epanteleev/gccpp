@@ -1,6 +1,5 @@
 #pragma once
 #include "gc/MarkWord.h"
-#include "gc/allocators/Allocator.h"
 #include "gc/containers/SpinLock.h"
 
 #include <functional>
@@ -26,17 +25,16 @@ namespace gccpp {
 
     static_assert(sizeof(Chunk) == 8, "Expect given size of the structure.");
 
-    class LinearAllocator final : public Allocator {
+    class LinearAllocator final {
     public:
         static constexpr unsigned char MAGIC = 0xAA;
     public:
         explicit LinearAllocator(std::size_t _max_size_in_byte);
-        ~LinearAllocator() override;
+        ~LinearAllocator();
 
     public:
-        void* alloc(std::size_t size) noexcept override;
-        void free(void* addr) noexcept override;
-        void print(std::ostringstream &out) override;
+        void* alloc(std::size_t size) noexcept;
+        void print(std::ostringstream &out);
 
         void release() noexcept;
         bool contains(void* object_address) const noexcept;

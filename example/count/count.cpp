@@ -178,7 +178,7 @@ int main(int argc, char **argv) {
             unmanaged::count(buffer);
         });
     } else if (std::strcmp(argv[1], "--gc") == 0) {
-        gccpp::Enviroment::init(std::make_unique<gccpp::MarkAndCompactCollector>(1024 * 1024 * 10));
+        gccpp::Enviroment::init(std::make_unique<gccpp::MarkAndCompactCollector>(1024 * 1024 * 32));
         measure([&]() {
             managed::count(buffer);
         });
