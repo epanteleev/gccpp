@@ -3,6 +3,15 @@
 namespace gccpp::details::mem {
     inline static void write_barrier() {
         asm volatile("": : :"memory");
+       // __sync_synchronize();
+    }
+
+    inline static bool xchgb(const bool volatile* dest, bool value) {
+        __asm__ volatile ("xchgb (%2),%0"
+                : "=q" (value)
+                : "0" (value), "r" (dest)
+                : "memory");
+        return value;
     }
 
     constexpr std::size_t align(std::size_t value) noexcept {

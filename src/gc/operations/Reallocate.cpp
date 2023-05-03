@@ -4,6 +4,29 @@
 #include <cassert>
 
 namespace gccpp::details {
+
+    template<std::size_t SIZE>
+    void compact(details::FixedSizeAllocator<SIZE>& allocator) {
+        if (allocator.allocation_count() == 0) {
+            return;
+        }
+        auto freed = allocator.left_finger();
+        auto dirty = allocator.right_finger();
+
+        if (Finger<SIZE>::crossed(freed, dirty)) {
+            return;
+        }
+        while (!Finger<SIZE>::crossed(freed, dirty)) {
+            std::memcpy(freed(), dirty(), SIZE);
+
+            auto mv_dirty = reinterpret_cast<MarkWord*>(dirty());
+            mv_dirty->set_forwarding_ptr(freed());
+            freed = freed.next();
+            dirty = dirty.next();
+        }
+        allocator.refresh_offset(dirty);
+    }
+
     std::size_t Reallocate::do_it(BasicCollector *gc) {
         auto allocator = dynamic_cast<SemispacesAllocator*>(gc->allocator);
         auto to_region = allocator->free_space;
@@ -22,42 +45,8 @@ namespace gccpp::details {
 
         allocator->active_space->visit(fn);
 
-//        auto begin = reinterpret_cast<std::size_t>(allocator->small_allocator32.start_ptr);
-//        auto end = begin + allocator->small_allocator32.offset;
-//        auto current = begin;
-//
-//        auto next_free_slot = [&](std::size_t current) {
-//            auto object = reinterpret_cast<MarkWord*>(current);
-//            while (object->color() != MarkWord::Color::White) {
-//                current += 32;
-//                object = reinterpret_cast<MarkWord*>(current);
-//            }
-//            return current;
-//        };
-//
-//        auto next_dirty_slot = [&](std::size_t current) {
-//            auto object = reinterpret_cast<MarkWord*>(current);
-//            while (object->color() != MarkWord::Color::Black) {
-//                current -= 32;
-//                object = reinterpret_cast<MarkWord*>(current);
-//            }
-//            return current;
-//        };
-//
-//        if (begin >= end) {
-//            return 0;
-//        }
-//        auto freed = next_free_slot(current);
-//        auto dirty = next_dirty_slot(end - 32);
-//
-//        while (freed < dirty) {
-//            std::memcpy(reinterpret_cast<void*>(freed), reinterpret_cast<void*>(dirty), 32);
-//
-//            auto mv_dirty = reinterpret_cast<MarkWord*>(dirty);
-//            mv_dirty->set_forwarding_ptr(reinterpret_cast<void*>(freed));
-//            freed = next_free_slot(freed);
-//            dirty = next_dirty_slot(dirty);
-//        }
+        compact(allocator->small_allocator32);
+        compact(allocator->small_allocator64);
         return 0;
     }
 }

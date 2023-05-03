@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gc/containers/Enviroment.h"
+#include "gc/containers/Environment.h"
 #include "gc/GarbageCollected.h"
 #include "gc/collectors/MarkAndSweepCollector.h"
 #include "gc/operations/GCOperation.h"
@@ -27,7 +27,7 @@ public:
 
 public:
     static gccpp::Oop<SizeT> make(std::size_t data) {
-        return gccpp::Enviroment::context().alloc<SizeT>(data);
+        return gccpp::Environment::context().alloc<SizeT>(data);
     }
 
 private:

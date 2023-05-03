@@ -9,7 +9,7 @@ namespace gccpp::details {
         ~SpinLock() = default;
 
     public:
-        inline void lock() {
+        inline void lock() noexcept {
             for (;;) {
                 if (!locked.exchange(true, std::memory_order_acquire)) {
                     break;
@@ -20,7 +20,7 @@ namespace gccpp::details {
             }
         }
 
-        inline void unlock() {
+        inline void unlock() noexcept {
             locked.store(false, std::memory_order_release);
         }
 

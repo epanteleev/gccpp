@@ -2,7 +2,7 @@
 #include <cassert>
 #include "UpdateReference.h"
 #include "gc/collectors/BasicCollector.h"
-#include "gc/containers/Enviroment.h"
+#include "gc/containers/Environment.h"
 
 namespace gccpp::details {
     std::size_t UpdateReference::do_it(BasicCollector *gc) {
@@ -26,13 +26,14 @@ namespace gccpp::details {
             if (top->mw()->color() != MarkWord::Color::Black) {
                 continue;
             }
-            top->mw()->set_color(MarkWord::Color::White);
             top->trace(this);
 
             if (top->mw()->forwarding_ptr() == nullptr) {
+                top->mw()->set_color(MarkWord::Color::White);
                 continue;
             }
             top->update(top->mw()->forwarding_ptr());
+            top->mw()->set_color(MarkWord::Color::White);
         }
         return 0;
     }

@@ -12,7 +12,7 @@
 namespace gccpp {
 
     class BasicCollector {
-        friend class Enviroment;
+        friend class Environment;
         friend class details::Reallocate;
         friend class details::Relocate;
     public:
@@ -23,7 +23,7 @@ namespace gccpp {
 
     public:
         [[nodiscard]]
-        Enviroment* context() const noexcept {
+        Environment* context() const noexcept {
             assert(ctx != nullptr);
             return ctx;
         }
@@ -34,13 +34,13 @@ namespace gccpp {
         }
 
     private:
-        void set_ctx(Enviroment* _ctx);
+        void set_ctx(Environment* _ctx);
 
     public:
         virtual void collect() = 0;
 
     protected:
-        Enviroment* ctx{};
+        Environment* ctx{};
         Allocator* allocator;
     };
 }

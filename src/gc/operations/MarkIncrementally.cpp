@@ -1,5 +1,5 @@
 #include "MarkIncrementally.h"
-#include "gc/containers/Enviroment.h"
+#include "gc/containers/Environment.h"
 #include <ctime>
 
 namespace gccpp::details {

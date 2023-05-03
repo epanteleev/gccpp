@@ -2,7 +2,7 @@
 
 #include "gc/GarbageCollected.h"
 #include "pointer/Oop.inline.h"
-#include "gc/containers/Enviroment.h"
+#include "gc/containers/Environment.h"
 #include "gc/operations/GCOperation.h"
 #include "gc/collectors/MarkAndSweepCollector.h"
 
@@ -15,7 +15,7 @@ public:
 
 public:
     static gccpp::Oop<Pair> make(const gccpp::Handle<T>& _first, const gccpp::Oop<U> _second) {
-        return gccpp::Enviroment::context().alloc<Pair>(_first, _second);
+        return gccpp::Environment::context().alloc<Pair>(_first, _second);
     }
 
 public:

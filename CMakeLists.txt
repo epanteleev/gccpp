@@ -4,7 +4,6 @@ project(cpp_garbage_collector)
 set(CMAKE_CXX_STANDARD 20)
 
 include_directories(src)
-
 set(CMAKE_CXX_FLAGS_DEBUG "-g -fsanitize=address -fsanitize=undefined ")
 set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O3 -Wall -Wextra -Wpedantic -Werror ")
 
@@ -42,7 +41,7 @@ add_library(libgc STATIC
     src/gc/containers/ThreadsStacks.cpp
     src/gc/containers/ThreadsStacks.h
     src/gc/containers/Worker.h
-    src/gc/containers/Enviroment.h
+    src/gc/containers/Environment.h
     src/gc/collectors/BasicCollector.cpp
     src/gc/containers/Worker.cpp
     src/gc/containers/Enviroment.cpp
@@ -58,7 +57,7 @@ add_library(libgc STATIC
     src/gc/operations/MarkIncrementally.h
     src/gc/operations/MarkIncrementally.cpp
     src/gc/containers/Worker.h
-    src/gc/containers/Enviroment.h
+    src/gc/containers/Environment.h
     src/gc/collectors/BasicCollector.cpp
     src/gc/containers/Worker.cpp
     src/gc/containers/Memory.h

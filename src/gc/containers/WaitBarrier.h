@@ -6,16 +6,21 @@
 class WaitBarrier final {
 public:
     void wait(const std::function<bool()>& fn) {
-        std::unique_lock<std::mutex> _lock(mutex);
-
-        cv.wait(_lock, fn);
+        pthread_mutex_lock(&ready_mutex);
+        while (!fn()) {
+            pthread_cond_wait(&ready_cond, &ready_mutex);
+        }
+        pthread_mutex_unlock(&ready_mutex);
     }
 
     inline void notify() noexcept {
-        cv.notify_all();
+        pthread_mutex_lock(&ready_mutex);
+        pthread_cond_broadcast(&ready_cond);
+
+        pthread_mutex_unlock(&ready_mutex);
     }
 
 private:
-    std::condition_variable cv;
-    std::mutex mutex;
+    pthread_mutex_t ready_mutex = PTHREAD_MUTEX_INITIALIZER;
+    pthread_cond_t ready_cond = PTHREAD_COND_INITIALIZER;
 };

@@ -4,7 +4,7 @@
 #include "pointer/Oop.h"
 #include "gc/collectors/MarkAndSweepCollector.h"
 #include "gc/collectors/MarkAndCompactCollector.h"
-#include "gc/containers/Enviroment.h"
+#include "gc/containers/Environment.h"
 
 #include "struct/Array.h"
 #include "Objects.h"
@@ -21,10 +21,10 @@ public:
         } else {
             assert(false); //todo
         }
-        gccpp::Enviroment::init(std::move(gc));
-        ctx = &gccpp::Enviroment::context();
+        gccpp::Environment::init(std::move(gc));
+        ctx = &gccpp::Environment::context();
     }
 
 protected:
-    gccpp::Enviroment* ctx{};
+    gccpp::Environment* ctx{};
 };

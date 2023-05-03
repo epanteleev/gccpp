@@ -1,5 +1,5 @@
 #pragma once
-#include "gc/containers/Enviroment.h"
+#include "gc/containers/Environment.h"
 #include "gc/GarbageCollected.h"
 #include "gc/operations/GCOperation.h"
 #include "pointer/Oop.inline.h"
@@ -33,16 +33,16 @@ public:
         if (len > other->length()) {
             return false;
         }
-        auto to_data = other.template content<Array<T>>()->data;
+        void* to_data = other.template content<Array<T>>()->data;
         auto bytes = len * gccpp::Oop<Array<T>>::sizeOf();
-        std::memcpy(to_data, data, bytes);
+        std::memcpy(to_data, (void*)data, bytes);
         return true;
     }
 public:
     static gccpp::Oop<Array<T>> make(std::size_t length) {
         auto size_in_bytes = length * gccpp::Oop<Array<T>>::sizeOf();
-        auto array = gccpp::Enviroment::context().raw_alloc<Array<T>>(size_in_bytes);
-        gccpp::Enviroment::init_object(array, length);
+        auto array = gccpp::Environment::context().raw_alloc<Array<T>>(size_in_bytes);
+        gccpp::Environment::init_object(array, length);
         return array;
     }
 

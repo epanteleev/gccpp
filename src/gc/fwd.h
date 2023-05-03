@@ -2,7 +2,7 @@
 
 namespace gccpp {
     class ThreadEnv;
-    class Enviroment;
+    class Environment;
     class MarkWord;
 
     template<typename T>

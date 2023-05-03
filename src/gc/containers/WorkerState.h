@@ -3,6 +3,7 @@
 #include <functional>
 #include <utility>
 #include "WaitBarrier.h"
+#include "Memory.h"
 
 namespace gccpp::details {
 
@@ -16,16 +17,9 @@ namespace gccpp::details {
         };
 
     public:
-        bool wait_start() {
-            barrier.wait([&] {
-                return mode == Mode::Started || mode == Mode::Collection || mode == Mode::Terminate;
-            });
-            return false;
-        }
-
         void wait_collect_command() {
             barrier.wait([&] {
-                return mode == Mode::Collection || mode == Mode::Terminate;
+                return is_terminate() || is_collect();
             });
         }
 
@@ -36,39 +30,38 @@ namespace gccpp::details {
         }
 
         bool is_terminate() {
-            return mode.load() == Mode::Terminate;
+            return mode == Mode::Terminate;
         }
 
         bool is_started() {
-            return mode.load() == Mode::Started;
+            return mode == Mode::Started;
         }
 
         bool is_collect() {
-            return mode.load() == Mode::Collection;
+            return mode == Mode::Collection;
         }
 
         void collect() {
-            mode.store(Mode::Collection);
+            mode = Mode::Collection;
             barrier.notify();
         }
 
         void start() {
-            mode.store(Mode::Started);
+            mode = Mode::Started;
             barrier.notify();
         }
 
         void mutators_continue() {
-            mode.store(Mode::Started);
-            barrier.notify();
+            start();
         }
 
         void terminate() {
-            mode.store(Mode::Terminate);
+            mode = Mode::Terminate;
             barrier.notify();
         }
 
     private:
-        std::atomic <Mode> mode;
+        std::atomic<Mode> mode;
         WaitBarrier barrier;
     };
 

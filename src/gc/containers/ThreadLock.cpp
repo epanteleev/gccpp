@@ -1,23 +1,21 @@
-#include "ThreadLock.h"
+#include "gc/containers/ThreadLock.h"
+#include "gc/containers/Environment.h"
+
 #include <mutex>
 #include <cassert>
 #include <deque>
 #include <functional>
 
 namespace gccpp::details {
-     thread_local SpinLock ThreadLock::threadLock = SpinLock();
+     thread_local SpinLock ThreadLock::threadLock{};
 
-    void ThreadLock::initialize_for_current_thread() {
-        std::lock_guard<SpinLock> _lock(mutex);
+    void ThreadLock::initialize_for_current_thread() noexcept {
         auto id = std::this_thread::get_id();
-
         lock_map.emplace_back(id, &threadLock);
     }
 
-    void ThreadLock::destroy_for_current_thread() {
-        std::lock_guard<SpinLock> _lock(mutex);
+    void ThreadLock::destroy_for_current_thread() noexcept {
         auto mut_ptr = find_entry();
-
         lock_map.erase(mut_ptr);
     }
 
@@ -30,14 +28,12 @@ namespace gccpp::details {
     }
 
     void ThreadLock::run_world() {
-        std::lock_guard<SpinLock> _lock(mutex);
         for (auto &[_, mut]: lock_map) {
             mut->unlock();
         }
     }
 
     bool ThreadLock::stw() {
-        std::lock_guard<SpinLock> _lock(mutex);
         for (auto &[_, mut]: lock_map) {
             mut->lock();
         }

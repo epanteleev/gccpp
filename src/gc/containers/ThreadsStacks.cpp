@@ -10,7 +10,6 @@ namespace gccpp::details {
     }
 
     void ThreadsStacks::initialize_for_current_thread() {
-        std::lock_guard<SpinLock> _l(spinLock);
         auto id = std::this_thread::get_id();
         assert(!map.contains(id));
 
@@ -18,7 +17,6 @@ namespace gccpp::details {
     }
 
     void ThreadsStacks::destroy_for_current_thread() {
-        std::lock_guard<SpinLock> _l(spinLock);
         auto stack = map.find(std::this_thread::get_id());
         assert(stack != map.end());
 
@@ -26,7 +24,6 @@ namespace gccpp::details {
     }
 
     void ThreadsStacks::visit(const std::function<void(element &)> &fn) noexcept {
-        std::lock_guard<SpinLock> _l(spinLock);
         for (auto& item: map) {
             fn(item);
         }

@@ -28,7 +28,7 @@ public:
     }
 
 public:
-    static gccpp::Oop<Line> createLine(gccpp::Enviroment &ctx);
+    static gccpp::Oop<Line> createLine(gccpp::Environment &ctx);
 
 public:
     gccpp::Oop<Point> a;

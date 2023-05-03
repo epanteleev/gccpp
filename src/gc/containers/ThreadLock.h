@@ -5,6 +5,7 @@
 #include <deque>
 
 #include "gc/containers/SpinLock.h"
+#include "gc/fwd.h"
 
 namespace gccpp::details {
     class ThreadLock final {
@@ -17,8 +18,8 @@ namespace gccpp::details {
         ~ThreadLock() = default;
 
     public:
-        void initialize_for_current_thread();
-        void destroy_for_current_thread();
+        void initialize_for_current_thread() noexcept;
+        void destroy_for_current_thread() noexcept;
 
     public:
         void lock();
@@ -36,6 +37,5 @@ namespace gccpp::details {
 
     private:
         type lock_map;
-        mutable SpinLock mutex;
     };
 }

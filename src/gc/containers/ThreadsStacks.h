@@ -25,7 +25,6 @@ namespace gccpp::details {
         static thread_local ShadowStack my_stack;
 
     private:
-        SpinLock spinLock;
         type map;
     };
 }

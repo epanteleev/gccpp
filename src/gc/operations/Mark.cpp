@@ -1,7 +1,7 @@
 #include "gc/operations/Mark.h"
 #include "gc/collectors/BasicCollector.h"
 #include <cassert>
-#include "gc/containers/Enviroment.h"
+#include "gc/containers/Environment.h"
 
 namespace gccpp::details {
     std::size_t Mark::do_it(BasicCollector *gc) {

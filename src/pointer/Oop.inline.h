@@ -2,7 +2,7 @@
 
 #include "pointer/Oop.h"
 #include "Handle.h"
-#include "gc/containers/Enviroment.h"
+#include "gc/containers/Environment.h"
 
 namespace gccpp {
     template<typename T>
@@ -10,7 +10,7 @@ namespace gccpp {
 
     template<typename T>
     Oop<T> &Oop<T>::operator=(Handle<T> &r) noexcept {
-        Enviroment::collector()->write_barrier(this, r.oop());
+        Environment::collector()->write_barrier(this, r.oop());
         return *this;
     }
 
@@ -30,13 +30,13 @@ namespace gccpp {
             return *this;
         }
         p = r.p;
-        //Enviroment::collector()->write_barrier(this, r);
+        //Environment::collector()->write_barrier(this, r);
         return *this;
     }
 
     template<typename T>
     Oop<T> &Oop<T>::operator=(Oop &&r) noexcept {
-       // Enviroment::collector()->write_barrier(this, r);
+       // Environment::collector()->write_barrier(this, r);
         p = r.p;
         r.p = nullptr;
         return *this;
@@ -69,7 +69,7 @@ namespace gccpp {
 
     template<typename T>
     Handle<T> &Handle<T>::operator=(Oop<T> ptr) {
-        //Enviroment::collector()->write_barrier(oop_ptr, ptr);
+        //Environment::collector()->write_barrier(oop_ptr, ptr);
         *oop_ptr = ptr;
         return *this;
     }

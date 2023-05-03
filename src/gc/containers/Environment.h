@@ -11,13 +11,13 @@ namespace gccpp {
     class ThreadEnv final {
         friend class HandleMark;
     public:
-        explicit ThreadEnv(Enviroment& ctx);
+        explicit ThreadEnv(Environment& ctx);
         ~ThreadEnv();
     private:
-        Enviroment& ctx;
+        Environment& ctx;
     };
 
-    class Enviroment final {
+    class Environment final {
         friend class BasicCollector;
         friend class details::Worker;
         friend class ThreadEnv;
@@ -29,9 +29,13 @@ namespace gccpp {
         template<typename T>
         friend class Handle;
     public:
-        explicit Enviroment(std::unique_ptr<BasicCollector> _gc);
+        explicit Environment(std::unique_ptr<BasicCollector> _gc);
 
-        ~Enviroment() {
+        Environment(Environment& env) = delete;
+        Environment(Environment&& env) = delete;
+        Environment operator=(Environment& env) = delete;
+        Environment operator=(Environment&& env) = delete;
+        ~Environment() {
             worker.stop();
         }
     public:
@@ -48,7 +52,6 @@ namespace gccpp {
             if (!self_suspend) {
                 return;
             }
-            details::mem::write_barrier();
             safepoint_slow();
         }
 
@@ -80,8 +83,8 @@ namespace gccpp {
         void oom_report();
 
     public:
-        static Enviroment& init(std::unique_ptr<BasicCollector> gc);
-        inline static Enviroment& context() {
+        static Environment& init(std::unique_ptr<BasicCollector> gc);
+        inline static Environment& context() {
             return *globalCtx;
         }
         inline static BasicCollector* collector() {
@@ -89,15 +92,18 @@ namespace gccpp {
         }
 
     private:
-        static std::unique_ptr<Enviroment> globalCtx;
+        static std::unique_ptr<Environment> globalCtx;
 
     private:
         std::unique_ptr<BasicCollector> gc{};
+
+        details::WorkerState state{};
+        std::atomic<bool> self_suspend{};
+
+        details::SpinLock env_lock{};
+        details::ThreadsStacks stacks{};
+        details::ThreadLock thread_lock{};
+
         details::Worker worker;
-        details::WorkerState state;
-        details::ThreadLock thread_lock;
-        volatile bool self_suspend{};
-        details::ThreadsStacks stacks;
     };
 }
-

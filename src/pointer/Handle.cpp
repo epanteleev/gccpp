@@ -1,5 +1,5 @@
 #include "pointer/Handle.h"
-#include "gc/containers/Enviroment.h"
+#include "gc/containers/Environment.h"
 
 namespace gccpp {
 

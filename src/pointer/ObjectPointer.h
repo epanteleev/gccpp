@@ -37,8 +37,9 @@ namespace gccpp::details {
         }
 
         ObjectPointer &operator=(void *ptr) = delete;
-    public:
+        ObjectPointer &operator=(const ObjectPointer& ptr) noexcept = default;
 
+    public:
         template<GarbageCollectedType Type>
         [[nodiscard]]
         inline Type* content() const noexcept {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gc/containers/Enviroment.h"
+#include "gc/containers/Environment.h"
 #include "gc/GarbageCollected.h"
 #include "gc/operations/GCOperation.h"
 #include "pointer/Oop.inline.h"
@@ -82,7 +82,7 @@ namespace managed {
 
     private:
         static gccpp::Oop<Node> makeNode(gccpp::Oop<Key> _key, gccpp::Oop<Value> _value, std::size_t _hash) {
-            return gccpp::Enviroment::context().alloc<Node>(_key, _value, _hash);
+            return gccpp::Environment::context().alloc<Node>(_key, _value, _hash);
         }
 
     public:
@@ -132,7 +132,7 @@ namespace managed {
 
         gccpp::Oop<HashMapIterator<Key, Value>> iterator() {
             auto oop = gccpp::Oop<HashMap<Key,Value>>::from(this);
-            return gccpp::Enviroment::context().alloc<HashMapIterator<Key, Value>>(oop);
+            return gccpp::Environment::context().alloc<HashMapIterator<Key, Value>>(oop);
         }
     public:
         void trace(gccpp::GCOperation *operation) noexcept override {
@@ -140,7 +140,7 @@ namespace managed {
         }
     public:
         static gccpp::Oop<HashMap<Key, Value>> make() {
-            auto& ctx = gccpp::Enviroment::context();
+            auto& ctx = gccpp::Environment::context();
             gccpp::HandleMark hm;
             gccpp::Handle tab(Array<Node>::make(ARRAY_SIZE));
 

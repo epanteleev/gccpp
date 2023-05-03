@@ -27,7 +27,7 @@ namespace managed {
     }
 
     gccpp::Oop<HashMap<String, SizeT>> parse_file(std::string_view buffer) {
-        auto& env = gccpp::Enviroment::context();
+        auto& env = gccpp::Environment::context();
         gccpp::HandleMark hm;
         gccpp::Handle hashMap(HashMap<String, SizeT>::make());
 
@@ -50,7 +50,7 @@ namespace managed {
     }
 
     void count(std::string_view buffer) {
-        auto &env = gccpp::Enviroment::context();
+        auto &env = gccpp::Environment::context();
         gccpp::ThreadEnv _th(env);
         gccpp::HandleMark hm;
 
@@ -178,7 +178,7 @@ int main(int argc, char **argv) {
             unmanaged::count(buffer);
         });
     } else if (std::strcmp(argv[1], "--gc") == 0) {
-        gccpp::Enviroment::init(std::make_unique<gccpp::MarkAndCompactCollector>(1024 * 1024 * 32));
+        gccpp::Environment::init(std::make_unique<gccpp::MarkAndCompactCollector>(1024 * 1024 * 32));
         measure([&]() {
             managed::count(buffer);
         });

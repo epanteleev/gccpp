@@ -41,7 +41,7 @@ namespace gccpp::details {
             return &stack[idx];
         }
     private:
-        size_type sp{};
+        size_type sp{}; //todo refactor it field
         Buffer<ObjectPointer> stack;
     };
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "gc/containers/Enviroment.h"
+#include "gc/containers/Environment.h"
 #include "gc/GarbageCollected.h"
 #include "gc/operations/GCOperation.h"
 #include "pointer/Oop.inline.h"
@@ -47,7 +47,7 @@ public:
 
 public:
     static gccpp::Oop<String> make(std::size_t length) {
-        auto str = gccpp::Enviroment::context().raw_alloc<String>(length + 1);
+        auto str = gccpp::Environment::context().raw_alloc<String>(length + 1);
         new(str.mw()) String(length);
         str->data[length] = '\0';
         return str;
@@ -55,8 +55,8 @@ public:
 
     static gccpp::Oop<String> make(std::string_view string) {
         auto length = string.length() + 1;
-        auto str = gccpp::Enviroment::context().raw_alloc<String>(length);
-        gccpp::Enviroment::init_object(str, length - 1);
+        auto str = gccpp::Environment::context().raw_alloc<String>(length);
+        gccpp::Environment::init_object(str, length - 1);
 
         std::memcpy(str->data, string.data(), string.length());
         str->data[length - 1] = '\0';

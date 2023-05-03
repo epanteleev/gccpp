@@ -8,9 +8,8 @@
 namespace gccpp::details {
     class Worker final {
     public:
-        explicit Worker(gccpp::Enviroment& _ctx):
-                ctx(_ctx),
-                worker(run, std::ref(*this)) {}
+        explicit Worker(gccpp::Environment& _ctx):
+                ctx(_ctx) {}
 
         ~Worker() = default;
     public:
@@ -20,14 +19,13 @@ namespace gccpp::details {
     public:
         void stop();
         void start();
-        void collect();
 
     private:
         static void run(Worker&) noexcept;
         bool wait_job();
     private:
-        gccpp::Enviroment& ctx;
-        std::thread worker;
+        gccpp::Environment& ctx;
+        std::thread worker{};
     };
 }
 

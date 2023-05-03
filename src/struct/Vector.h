@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gc/containers/Enviroment.h"
+#include "gc/containers/Environment.h"
 #include "gc/GarbageCollected.h"
 #include "gc/collectors/MarkAndSweepCollector.h"
 #include "gc/operations/GCOperation.h"
@@ -56,7 +56,7 @@ private:
 
 public:
     static gccpp::Oop<Vector<T>> make() {
-        auto& env = gccpp::Enviroment::context();
+        auto& env = gccpp::Environment::context();
         auto array = Array<T>::make(INITIAL_SIZE);
 
         return env.alloc<Vector<T>>(array);
