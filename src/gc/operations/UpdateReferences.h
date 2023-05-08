@@ -7,9 +7,9 @@
 
 namespace gccpp::details {
 
-    class UpdateReference final : public GCOperation {
+    class UpdateReferences final : public GCOperation {
     public:
-        explicit UpdateReference(Buffer<details::ObjectPointer*>& _worklist):
+        explicit UpdateReferences(Buffer<details::ObjectPointer*>& _worklist):
             worklist(_worklist) {}
 
     public:

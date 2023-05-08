@@ -1,7 +1,7 @@
 #include "gc/collectors/MarkAndCompactCollector.h"
 #include "gc/operations/Mark.h"
 #include "gc/operations/Reallocate.h"
-#include "gc/operations/UpdateReference.h"
+#include "gc/operations/UpdateReferences.h"
 #include "gc/operations/Relocate.h"
 
 namespace gccpp {
@@ -13,7 +13,7 @@ namespace gccpp {
         details::Reallocate compact(worklist);
         compact.do_it(this);
 
-        details::UpdateReference updateReference(worklist);
+        details::UpdateReferences updateReference(worklist);
         updateReference.do_it(this);
 
         details::Relocate relocate;

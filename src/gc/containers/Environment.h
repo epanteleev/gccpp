@@ -23,8 +23,7 @@ namespace gccpp {
         friend class ThreadEnv;
         friend class HandleMark;
         friend class details::Mark;
-        friend class details::UpdateReference;
-        friend class details::MarkIncrementally;
+        friend class details::UpdateReferences;
 
         template<typename T>
         friend class Handle;

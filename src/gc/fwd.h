@@ -15,10 +15,8 @@ namespace gccpp {
         class ShadowStack;
         class Mark;
         class Sweep;
-        class MarkIncrementally;
         class Reallocate;
         class Relocate;
-        class UpdateReference; //Todo rename to 'UpdateReferences'
-        class MarkIncrementally;
+        class UpdateReferences;
     }
 }

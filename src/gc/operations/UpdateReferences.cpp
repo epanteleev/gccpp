@@ -1,11 +1,11 @@
 
 #include <cassert>
-#include "UpdateReference.h"
+#include "UpdateReferences.h"
 #include "gc/collectors/BasicCollector.h"
 #include "gc/containers/Environment.h"
 
 namespace gccpp::details {
-    std::size_t UpdateReference::do_it(BasicCollector *gc) {
+    std::size_t UpdateReferences::do_it(BasicCollector *gc) {
         auto& stacks = gc->context()->stacks;
 
         stacks.visit([&](ThreadsStacks::element& pair) {
@@ -31,14 +31,14 @@ namespace gccpp::details {
         return 0;
     }
 
-    void UpdateReference::trace(ObjectPointer &ptr) {
+    void UpdateReferences::trace(ObjectPointer &ptr) {
         if (ptr == nullptr) {
             return;
         }
         worklist.push(&ptr);
     }
 
-    void UpdateReference::process_pointer(ObjectPointer* oop) noexcept {
+    void UpdateReferences::process_pointer(ObjectPointer* oop) noexcept {
         oop->trace(this);
 
         if (oop->mw()->forwarding_ptr() == nullptr) {
