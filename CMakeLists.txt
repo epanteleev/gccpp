@@ -44,21 +44,21 @@ add_library(libgc STATIC
     src/gc/containers/Environment.h
     src/gc/collectors/BasicCollector.cpp
     src/gc/containers/Worker.cpp
-    src/gc/containers/Enviroment.cpp
+    src/gc/containers/Environment.cpp
     src/gc/containers/ThreadLock.h
     src/gc/containers/ThreadLock.cpp
     src/pointer/Handle.cpp
     src/pointer/Oop.inline.h
     src/gc/containers/Buffer.h
-        src/gc/fwd.h
+    src/gc/fwd.h
     src/gc/containers/SpinLock.h
-        src/gc/containers/Worker.h
+    src/gc/containers/Worker.h
     src/gc/containers/Environment.h
     src/gc/collectors/BasicCollector.cpp
     src/gc/containers/Worker.cpp
     src/gc/containers/Memory.h
     src/gc/containers/WorkerState.h
-        src/gc/containers/WaitBarrier.h
+    src/gc/containers/WaitBarrier.h
     src/gc/containers/Page.cpp
     src/gc/containers/Page.h
     src/gc/allocators/details/FixedSizeAllocator.h

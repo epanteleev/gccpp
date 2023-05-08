@@ -17,6 +17,9 @@ namespace gccpp::details {
         std::size_t do_it(BasicCollector *gc) override;
 
     private:
+        void process_pointer(ObjectPointer* oop) noexcept;
+
+    private:
         Buffer<details::ObjectPointer*>& worklist;
     };
 }

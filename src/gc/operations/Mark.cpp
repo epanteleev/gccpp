@@ -13,21 +13,16 @@ namespace gccpp::details {
                 if (*root == nullptr) {
                     continue;
                 }
-                worklist.push(root);
+                process_pointer(root);
             }
         };
         stacks.visit(visit);
 
         while (!worklist.empty()) {
-            auto top = *worklist.pop();
-            assert(top != nullptr);
+            auto top = worklist.pop();
+            assert(*top != nullptr);
 
-            if (top.mw()->color() == MarkWord::Color::Black) {
-                continue;
-            }
-            top.mw()->set_color(MarkWord::Color::Black);
-
-            top.trace(this);
+            process_pointer(top);
         }
         return 0;
     }
@@ -37,6 +32,14 @@ namespace gccpp::details {
             return;
         }
         worklist.push(&ptr);
+    }
+
+    void Mark::process_pointer(ObjectPointer *oop) noexcept {
+        if (oop->mw()->color() == MarkWord::Color::Black) {
+            return;
+        }
+        oop->mw()->set_color(MarkWord::Color::Black);
+        oop->trace(this);
     }
 
 }

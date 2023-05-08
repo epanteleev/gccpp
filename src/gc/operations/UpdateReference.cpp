@@ -14,7 +14,7 @@ namespace gccpp::details {
                 if (*root == nullptr) {
                     continue;
                 }
-                worklist.push(root);
+                process_pointer(root);
             }
         });
 
@@ -26,14 +26,7 @@ namespace gccpp::details {
             if (top->mw()->color() != MarkWord::Color::Black) {
                 continue;
             }
-            top->trace(this);
-
-            if (top->mw()->forwarding_ptr() == nullptr) {
-                top->mw()->set_color(MarkWord::Color::White);
-                continue;
-            }
-            top->update(top->mw()->forwarding_ptr());
-            top->mw()->set_color(MarkWord::Color::White);
+            process_pointer(top);
         }
         return 0;
     }
@@ -43,6 +36,17 @@ namespace gccpp::details {
             return;
         }
         worklist.push(&ptr);
+    }
+
+    void UpdateReference::process_pointer(ObjectPointer* oop) noexcept {
+        oop->trace(this);
+
+        if (oop->mw()->forwarding_ptr() == nullptr) {
+            oop->mw()->set_color(MarkWord::Color::White);
+            return;
+        }
+        oop->update(oop->mw()->forwarding_ptr());
+        oop->mw()->set_color(MarkWord::Color::White);
     }
 }
 
