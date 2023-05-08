@@ -48,7 +48,7 @@ TEST_P(GCTest, ref_leak_from_thread) {
         gccpp::HandleMark fr;
 
         ctx->force_gc();
-
+        ctx->safepoint();
         auto point = ctx->alloc<Point>(2, 3);
         gccpp::Handle h(point);
 
@@ -79,12 +79,14 @@ TEST_P(GCTest, fill_array) {
         gccpp::HandleMark fr;
 
         ctx->force_gc();
+        ctx->safepoint();
 
         for (std::size_t i = 64; i < size; i++) {
             auto point = ctx->alloc<Point>(i, 3);
             array->at(i) = point;
         }
         ctx->force_gc();
+        ctx->safepoint();
     };
 
     std::thread thread(work);
@@ -99,6 +101,7 @@ TEST_P(GCTest, fill_array) {
     });
 
     ctx->force_gc();
+    ctx->safepoint();
     for (std::size_t i = 0; i < size; i++) {
         ASSERT_EQ(i, array->at(i)->x);
     }

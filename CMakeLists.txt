@@ -50,21 +50,15 @@ add_library(libgc STATIC
     src/pointer/Handle.cpp
     src/pointer/Oop.inline.h
     src/gc/containers/Buffer.h
-    src/gc/collectors/IncrementalMarkAndSweep.h
-    src/gc/collectors/IncrementalMarkAndSweep.cpp
-    src/gc/fwd.h
+        src/gc/fwd.h
     src/gc/containers/SpinLock.h
-    src/gc/operations/MarkIncrementally.h
-    src/gc/operations/MarkIncrementally.cpp
-    src/gc/containers/Worker.h
+        src/gc/containers/Worker.h
     src/gc/containers/Environment.h
     src/gc/collectors/BasicCollector.cpp
     src/gc/containers/Worker.cpp
     src/gc/containers/Memory.h
     src/gc/containers/WorkerState.h
-    src/gc/containers/ThreadSafepointState.cpp
-    src/gc/containers/ThreadSafepointState.h
-    src/gc/containers/WaitBarrier.h
+        src/gc/containers/WaitBarrier.h
     src/gc/containers/Page.cpp
     src/gc/containers/Page.h
     src/gc/allocators/details/FixedSizeAllocator.h

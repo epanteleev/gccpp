@@ -28,11 +28,6 @@ namespace gccpp {
             return ctx;
         }
 
-    public:
-        virtual void write_barrier(details::ObjectPointer* des, const details::ObjectPointer& src) {
-            *des = src;
-        }
-
     private:
         void set_ctx(Environment* _ctx);
 

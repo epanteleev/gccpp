@@ -10,7 +10,7 @@ namespace gccpp {
 
     template<typename T>
     Oop<T> &Oop<T>::operator=(Handle<T> &r) noexcept {
-        Environment::collector()->write_barrier(this, r.oop());
+        p = r.oop().mw();
         return *this;
     }
 
@@ -30,13 +30,11 @@ namespace gccpp {
             return *this;
         }
         p = r.p;
-        //Environment::collector()->write_barrier(this, r);
         return *this;
     }
 
     template<typename T>
     Oop<T> &Oop<T>::operator=(Oop &&r) noexcept {
-       // Environment::collector()->write_barrier(this, r);
         p = r.p;
         r.p = nullptr;
         return *this;
@@ -69,20 +67,22 @@ namespace gccpp {
 
     template<typename T>
     Handle<T> &Handle<T>::operator=(Oop<T> ptr) {
-        //Environment::collector()->write_barrier(oop_ptr, ptr);
         *oop_ptr = ptr;
         return *this;
     }
 
     template<typename T>
     Handle<T> &Handle<T>::operator=(const Handle<T>& ptr) {
+        if (this == &ptr) {
+            return *this;
+        }
         *oop_ptr = *ptr.oop_ptr;
         return *this;
     }
 
     template<typename T>
     Handle<T>::operator bool() const {
-        return (*oop_ptr).mw() != nullptr; //Todo read bar??
+        return (*oop_ptr).mw() != nullptr;
     }
 
     template<typename T>
@@ -105,6 +105,6 @@ namespace gccpp {
 
     template<typename T>
     details::ObjectPointer Handle<T>::oop() const {
-        return *oop_ptr; // Todo need read bar??
+        return *oop_ptr;
     }
 }

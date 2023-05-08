@@ -4,15 +4,12 @@
 #include "gc/collectors/BasicCollector.h"
 #include "gc/allocators/SemispacesAllocator.h"
 #include "gc/containers/Buffer.h"
+#include "gc/fwd.h"
 
 #include <cstring>
 #include <cstdio>
 
 namespace gccpp {
-    namespace details {
-        class Mark;
-        class Reallocate;
-    }
 
     class MarkAndCompactCollector: public BasicCollector {
     public:
