@@ -8,7 +8,7 @@
 
 namespace gccpp {
     void *MallocBasedAllocator::alloc(std::size_t size) noexcept {
-        const std::lock_guard<details::SpinLock> _l(lock);
+        const std::lock_guard _l(lock);
         void* ptr = std::malloc(size + sizeof(malloc_based::Chunk));
         assert(ptr != nullptr);
 

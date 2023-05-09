@@ -27,13 +27,11 @@ namespace managed {
     }
 
     gccpp::Oop<HashMap<String, SizeT>> parse_file(std::string_view buffer) {
-        auto& env = gccpp::Environment::context();
         gccpp::HandleMark hm;
         gccpp::Handle hashMap(HashMap<String, SizeT>::make());
 
         auto pos = buffer.begin();
         while (pos != buffer.end()) {
-            env.safepoint();
             if (std::isalnum(*pos)) {
                 auto word_begin = pos;
 
@@ -73,11 +71,8 @@ namespace managed {
         });
 
         for (std::size_t i = 0; i < vector->length(); i++) {
-            gccpp::HandleMark _hm1;
-            gccpp::Handle elem(vector->at(i));
-
+            auto elem = vector->at(i);
             std::cout << elem->first->cstr() <<" : " << elem->second->value() << std::endl;
-            env.safepoint();
         }
 
         env.safepoint();
@@ -178,7 +173,7 @@ int main(int argc, char **argv) {
             unmanaged::count(buffer);
         });
     } else if (std::strcmp(argv[1], "--gc") == 0) {
-        gccpp::Environment::init(std::make_unique<gccpp::MarkAndCompactCollector>(1024 * 1024 * 32));
+        gccpp::Environment::init(std::make_unique<gccpp::MarkAndCompactCollector>(1024 * 32 * 1024));
         measure([&]() {
             managed::count(buffer);
         });

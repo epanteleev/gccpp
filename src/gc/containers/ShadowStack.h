@@ -15,12 +15,11 @@ namespace gccpp::details {
 
     public:
         [[nodiscard]]
-        size_type enter() const {
-            return sp;
+        size_type enter() const noexcept {
+            return size();
         }
 
         void leave(size_type saved_sp) noexcept {
-            sp = saved_sp;
             stack.trunc(saved_sp);
         }
 
@@ -29,7 +28,7 @@ namespace gccpp::details {
     public:
         [[nodiscard]]
         size_type size() const noexcept {
-            return sp;
+            return stack.size();
         }
 
         [[nodiscard]]
@@ -41,7 +40,6 @@ namespace gccpp::details {
             return &stack[idx];
         }
     private:
-        size_type sp{}; //todo refactor it field
         Buffer<ObjectPointer> stack;
     };
 }

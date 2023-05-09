@@ -5,6 +5,7 @@
 #include "gc/fwd.h"
 #include "WorkerState.h"
 #include "Memory.h"
+#include "GCTimeRecorder.h"
 
 namespace gccpp {
 
@@ -34,9 +35,7 @@ namespace gccpp {
         Environment(Environment&& env) = delete;
         Environment operator=(Environment& env) = delete;
         Environment operator=(Environment&& env) = delete;
-        ~Environment() {
-            worker.stop();
-        }
+        ~Environment();
     public:
         template<gccpp::GarbageCollectedType T, typename... Args>
         static inline gccpp::Oop<T> init_object(gccpp::Oop<T> oop, Args... args) {
@@ -103,6 +102,7 @@ namespace gccpp {
         details::ThreadsStacks stacks{};
         details::ThreadLock thread_lock{};
 
+        details::GCTimeRecorder recorder;
         details::Worker worker;
     };
 }

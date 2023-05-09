@@ -39,6 +39,11 @@ namespace gccpp::details {
             return current_size == 0;
         }
 
+        [[nodiscard]]
+        inline std::size_t size() const noexcept {
+            return current_size;
+        }
+
         inline T pop() noexcept {
             assert(current_size != 0);
             auto back = buffer[current_size - 1];
@@ -48,6 +53,10 @@ namespace gccpp::details {
 
         inline T& operator[](std::size_t idx) const {
             return buffer[idx];
+        }
+
+        inline T& back() noexcept {
+            return buffer[current_size - 1];
         }
 
         inline void trunc(std::size_t to_size) noexcept {

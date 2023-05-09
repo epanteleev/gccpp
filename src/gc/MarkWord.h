@@ -20,8 +20,8 @@ namespace gccpp {
         ~MarkWord() = default;
 
         [[nodiscard]]
-        always_inline void *object() const {
-            return (void *) ((char*)this + sizeof(MarkWord));
+        always_inline void *object() {
+            return (void *) (reinterpret_cast<char*>(this) + sizeof(MarkWord));
         }
 
     public:

@@ -17,10 +17,10 @@ namespace gccpp {
     }
 
     void *LinearAllocator::alloc(std::size_t size) noexcept {
-        const std::lock_guard<details::SpinLock> _l(lock);
+        const std::lock_guard _l(lock);
 
         const std::size_t current_address = reinterpret_cast<std::size_t>(start_ptr) + offset;
-        const std::size_t aligned_size = details::mem::align(size + sizeof(Chunk));
+        const std::size_t aligned_size = details::mem::align8(size + sizeof(Chunk));
         if (aligned_size + offset > max_size) {
             return nullptr;
         }
@@ -36,14 +36,15 @@ namespace gccpp {
     }
 
     LinearAllocator::LinearAllocator(std::size_t _max_size):
-        max_size(details::mem::align(_max_size)) {
+        max_size(details::mem::align8(_max_size)) {
         start_ptr = Page::alloc(max_size);
+        release();
         assert(reinterpret_cast<std::size_t>(start_ptr) % 8 == 0);
     }
 
     void LinearAllocator::release() noexcept {
 #ifndef NDEBUG
-        std::memset(start_ptr, 0, offset); // for debugging
+        std::memset(start_ptr, -1, offset); // for debugging
 #endif
         offset = 0;
         allocation_count = 0;

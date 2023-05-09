@@ -81,7 +81,7 @@ namespace managed {
         };
 
     private:
-        static gccpp::Oop<Node> makeNode(gccpp::Oop<Key> _key, gccpp::Oop<Value> _value, std::size_t _hash) {
+        static gccpp::Oop<Node> makeNode(gccpp::Handle<Key>& _key, gccpp::Handle<Value>& _value, std::size_t _hash) {
             return gccpp::Environment::context().alloc<Node>(_key, _value, _hash);
         }
 
@@ -138,6 +138,7 @@ namespace managed {
         void trace(gccpp::GCOperation *operation) noexcept override {
             operation->trace(table);
         }
+
     public:
         static gccpp::Oop<HashMap<Key, Value>> make() {
             auto& ctx = gccpp::Environment::context();

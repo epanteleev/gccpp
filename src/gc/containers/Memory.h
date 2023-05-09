@@ -14,12 +14,12 @@ namespace gccpp::details::mem {
         return value;
     }
 
-    constexpr std::size_t align(std::size_t value) noexcept {
+    constexpr std::size_t align8(std::size_t value) noexcept {
         return ((value + 7) / 8) * 8;
     }
 
     template<typename Type>
-    constexpr std::size_t aligned_sizeof() noexcept {
-        return align(sizeof(Type));
+    constexpr std::size_t aligned_sizeof8() noexcept {
+        return align8(sizeof(Type));
     }
 }

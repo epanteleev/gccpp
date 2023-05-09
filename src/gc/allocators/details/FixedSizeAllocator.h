@@ -44,7 +44,7 @@ namespace gccpp::details {
 
     template<std::size_t SIZE>
     class RightFinger: public Finger<SIZE> {
-        static_assert(mem::align(SIZE) == SIZE, "expect aligned value");
+        static_assert(mem::align8(SIZE) == SIZE, "expect aligned value");
     public:
         explicit RightFinger(std::size_t addr, std::size_t end):
             Finger<SIZE>(addr, end) {}
@@ -70,7 +70,7 @@ namespace gccpp::details {
 
     template<std::size_t SIZE>
     class LeftFinger: public Finger<SIZE> {
-        static_assert(mem::align(SIZE) == SIZE, "expect aligned value");
+        static_assert(mem::align8(SIZE) == SIZE, "expect aligned value");
     public:
         explicit LeftFinger(std::size_t addr, std::size_t _end):
             Finger<SIZE>(addr, _end) {}
@@ -101,10 +101,10 @@ namespace gccpp::details {
 
     template<std::size_t SIZE>
     class FixedSizeAllocator final {
-        static_assert(mem::align(SIZE) == SIZE, "expect aligned value");
+        static_assert(mem::align8(SIZE) == SIZE, "expect aligned value");
     public:
         explicit FixedSizeAllocator(std::size_t _max_size):
-            max_size(mem::align(_max_size))
+            max_size(mem::align8(_max_size))
         {
             assert(max_size >= SIZE);
             start_ptr = Page::alloc(max_size);

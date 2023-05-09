@@ -20,9 +20,6 @@ namespace gccpp::details {
 
         while (!worklist.empty()) {
             auto top = worklist.pop();
-            if (*top == nullptr) {
-                continue;
-            }
             if (top->mw()->color() != MarkWord::Color::Black) {
                 continue;
             }

@@ -7,7 +7,7 @@ namespace gccpp::details {
     std::size_t Mark::do_it(BasicCollector *gc) {
         auto& stacks = gc->context()->stacks;
         //Initial marking.
-        auto visit = [&](ThreadsStacks::element& pair) {
+        auto visit = [&](ThreadsStacks::element& pair) -> void {
             for(std::size_t i = 0; i < pair.second->size(); i++) {
                 auto root = pair.second->addr(i);
                 if (*root == nullptr) {

@@ -9,6 +9,9 @@ namespace gccpp::details {
             if (self.wait_job()) {
                 return;
             }
+            Timer timer;
+            timer.start();
+
             std::lock_guard _lock(self.ctx.env_lock);
             self.ctx.thread_lock.stw();
 
@@ -19,6 +22,9 @@ namespace gccpp::details {
             mem::write_barrier();
             self.ctx.state.mutators_continue();
             self.ctx.thread_lock.run_world();
+
+            timer.stop();
+            self.ctx.recorder.append(timer);
         }
     }
 

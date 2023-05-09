@@ -48,7 +48,7 @@ public:
 public:
     static gccpp::Oop<String> make(std::size_t length) {
         auto str = gccpp::Environment::context().raw_alloc<String>(length + 1);
-        new(str.mw()) String(length);
+        gccpp::Environment::init_object(str, length);
         str->data[length] = '\0';
         return str;
     }
@@ -58,7 +58,7 @@ public:
         auto str = gccpp::Environment::context().raw_alloc<String>(length);
         gccpp::Environment::init_object(str, length - 1);
 
-        std::memcpy(str->data, string.data(), string.length());
+        std::memcpy(str->data, string.data(), length - 1);
         str->data[length - 1] = '\0';
         return str;
     }

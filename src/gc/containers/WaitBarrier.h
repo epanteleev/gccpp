@@ -6,18 +6,23 @@
 class WaitBarrier final {
 public:
     void wait(const std::function<bool()>& fn) {
-        pthread_mutex_lock(&ready_mutex);
+        int lock_err = pthread_mutex_lock(&ready_mutex);
+        assert_linux_error(lock_err);
         while (!fn()) {
-            pthread_cond_wait(&ready_cond, &ready_mutex);
+            int may_err = pthread_cond_wait(&ready_cond, &ready_mutex);
+            assert_linux_error(may_err);
         }
-        pthread_mutex_unlock(&ready_mutex);
+        int unlock_err = pthread_mutex_unlock(&ready_mutex);
+        assert_linux_error(unlock_err);
     }
 
     inline void notify() noexcept {
-        pthread_mutex_lock(&ready_mutex);
-        pthread_cond_broadcast(&ready_cond);
-
-        pthread_mutex_unlock(&ready_mutex);
+        int lock_err = pthread_mutex_lock(&ready_mutex);
+        assert_linux_error(lock_err);
+        int err = pthread_cond_broadcast(&ready_cond);
+        assert_linux_error(err);
+        int unlock_err = pthread_mutex_unlock(&ready_mutex);
+        assert_linux_error(unlock_err);
     }
 
 private:

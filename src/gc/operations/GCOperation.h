@@ -1,12 +1,7 @@
 #pragma once
+#include "gc/fwd.h"
 
 namespace gccpp {
-    class MarkAndSweepCollector;
-    class BasicCollector;
-
-    namespace details {
-        class ObjectPointer;
-    }
 
     class GCOperation {
     public:

@@ -84,6 +84,11 @@ namespace gccpp {
         std::terminate();
     }
 
+    Environment::~Environment() {
+        worker.stop();
+        recorder.report(stderr);
+    }
+
     ThreadEnv::ThreadEnv(Environment &_ctx): ctx(_ctx) {
         ctx.initialize_for_current_thread();
     }

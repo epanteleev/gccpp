@@ -62,7 +62,7 @@ add_library(libgc STATIC
         src/gc/containers/Page.cpp
         src/gc/containers/Page.h
         src/gc/allocators/details/FixedSizeAllocator.h
-)
+        src/gc/containers/GCTimeRecorder.h src/gc/containers/GCTimeRecorder.h)
 
 
 set(DATA_STRUCTURES

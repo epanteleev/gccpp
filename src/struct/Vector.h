@@ -13,7 +13,7 @@ private:
     static constexpr float RESIZE_RATIO = 2;
     static constexpr std::size_t INITIAL_SIZE = 16;
 public:
-    explicit Vector(gccpp::Oop<Array<T>> _data):
+    explicit Vector(gccpp::Handle<Array<T>>& _data):
             data(_data) {};
 
 public:
@@ -57,7 +57,8 @@ private:
 public:
     static gccpp::Oop<Vector<T>> make() {
         auto& env = gccpp::Environment::context();
-        auto array = Array<T>::make(INITIAL_SIZE);
+        gccpp::HandleMark hm;
+        gccpp::Handle array(Array<T>::make(INITIAL_SIZE));
 
         return env.alloc<Vector<T>>(array);
     }
