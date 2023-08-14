@@ -3,6 +3,7 @@
 #include "gc/containers/SpinLock.h"
 
 #include <functional>
+#include <sstream>
 
 namespace gccpp {
 
@@ -53,5 +54,3 @@ namespace gccpp {
         details::SpinLock lock;
     };
 }
-
-

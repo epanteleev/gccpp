@@ -3,8 +3,6 @@
 #include <chrono>
 #include <sstream>
 
-#define USE_GCTIME_PROFILER
-
 namespace gccpp::details {
 
     struct Record {

@@ -96,7 +96,7 @@ namespace gccpp {
         std::unique_ptr<BasicCollector> gc{};
 
         details::WorkerState state{};
-        std::atomic<bool> self_suspend{};
+        volatile bool self_suspend{}; //Volatile only for x64 arch.
 
         details::SpinLock env_lock{};
         details::ThreadsStacks stacks{};
