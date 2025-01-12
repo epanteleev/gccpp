@@ -1,6 +1,5 @@
 #pragma once
-#include <array>
-#include <stack>
+
 #include "pointer/ObjectPointer.h"
 #include "Buffer.h"
 

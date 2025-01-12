@@ -1,13 +1,9 @@
 #pragma once
 #include <gtest/gtest.h>
 
-#include "pointer/Oop.h"
 #include "gc/collectors/MarkAndSweepCollector.h"
 #include "gc/collectors/MarkAndCompactCollector.h"
 #include "gc/containers/Environment.h"
-
-#include "struct/Array.h"
-#include "Objects.h"
 
 class GCTest : public testing::TestWithParam<std::string> {
 public:

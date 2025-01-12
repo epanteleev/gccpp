@@ -2,6 +2,8 @@
 
 #include <gtest/gtest.h>
 #include "../utils/GCTest.h"
+#include "../utils/Objects.h"
+#include "struct/Array.h"
 
 TEST_P(GCTest, two_threads) {
     gccpp::ThreadEnv _th(*ctx);

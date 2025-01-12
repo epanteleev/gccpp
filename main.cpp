@@ -1,15 +1,12 @@
-#include <iostream>
-#include <thread>
+
 #include "gc/containers/Environment.h"
-#include "pointer/Oop.inline.h"
-#include "gc/GarbageCollected.h"
 #include "gc/collectors/MarkAndSweepCollector.h"
-#include "gc/operations/GCOperation.h"
+#include "pointer/Handle.h"
 
 int main(int argc, char **argv) {
-    auto& env = gccpp::Environment::init(std::make_unique<gccpp::MarkAndSweepCollector>());
+    auto& env = gccpp::Environment::init(std::make_unique<gccpp::MarkAndSweepCollector>(4 * 1024 * 1024));
     gccpp::ThreadEnv _th(env);
-    gccpp::HandleMark hm(_th);
+    gccpp::HandleMark hm;
 
     return 0;
 }

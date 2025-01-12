@@ -6,6 +6,7 @@
 #include "WorkerState.h"
 #include "Memory.h"
 #include "GCTimeRecorder.h"
+#include <atomic>
 
 namespace gccpp {
 
@@ -96,7 +97,7 @@ namespace gccpp {
         std::unique_ptr<BasicCollector> gc{};
 
         details::WorkerState state{};
-        volatile bool self_suspend{}; //Volatile only for x64 arch.
+        std::atomic_bool self_suspend{};
 
         details::SpinLock env_lock{};
         details::ThreadsStacks stacks{};

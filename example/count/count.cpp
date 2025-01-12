@@ -1,7 +1,6 @@
 #include "gc/collectors/MarkAndCompactCollector.h"
 #include <iostream>
 #include <fstream>
-#include <ranges>
 #include "struct/String.h"
 #include "ManagedHashMap.h"
 #include "UnmanagedHashMap.h"

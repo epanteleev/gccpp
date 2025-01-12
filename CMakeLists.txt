@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 include_directories(src)
 #set(CMAKE_CXX_FLAGS -DUSE_GCTIME_PROFILER)
-set(CMAKE_CXX_FLAGS_DEBUG "-g -fsanitize=address -fsanitize=undefined ")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -fsanitize=thread -fsanitize=undefined ")
 set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O3 -Wall -Wextra -Wpedantic -Werror ")
 
 
