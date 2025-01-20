@@ -103,7 +103,7 @@ namespace gccpp::details {
     class FixedSizeAllocator final {
         static_assert(mem::align8(SIZE) == SIZE, "expect aligned value");
     public:
-        explicit FixedSizeAllocator(std::size_t _max_size):
+        explicit FixedSizeAllocator(const std::size_t _max_size):
             max_size(mem::align8(_max_size))
         {
             assert(max_size >= SIZE);
@@ -116,7 +116,7 @@ namespace gccpp::details {
         }
     public:
         void* alloc() noexcept {
-            const std::lock_guard<details::SpinLock> _l(lock);
+            const std::lock_guard _l(lock);
 
             const std::size_t current_address = reinterpret_cast<std::size_t>(start_ptr) + offset;
             if (SIZE + offset > max_size) {
@@ -181,7 +181,7 @@ namespace gccpp::details {
         void* start_ptr{};
         const std::size_t max_size{};
         std::size_t offset{};
-        details::SpinLock lock;
+        SpinLock lock;
     };
 
 }

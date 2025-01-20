@@ -3,8 +3,6 @@
 #include "gc/allocators/Allocator.h"
 #include "gc/containers/SpinLock.h"
 
-#include <mutex>
-#include <unordered_set>
 #include <functional>
 #include <cassert>
 

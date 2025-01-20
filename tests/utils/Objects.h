@@ -5,7 +5,7 @@
 #include "gc/GarbageCollected.h"
 #include "gc/operations/GCOperation.h"
 
-struct Point : public gccpp::GarbageCollected {
+struct Point : gccpp::GarbageCollected {
 public:
     Point(int _x, int _y) : x(_x), y(_y) {}
 
@@ -17,7 +17,7 @@ public:
     int y;
 };
 
-struct Line : public gccpp::GarbageCollected {
+struct Line : gccpp::GarbageCollected {
 public:
     Line(gccpp::Oop<Point> _a, gccpp::Oop<Point> _b) :
             a(std::move(_a)), b(std::move(_b)) {}
@@ -35,7 +35,7 @@ public:
     gccpp::Oop<Point> b;
 };
 
-struct List: public gccpp::GarbageCollected {
+struct List: gccpp::GarbageCollected {
 public:
     List() = default;
     List(int _data, gccpp::Oop<List> _next) :

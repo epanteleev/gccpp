@@ -77,7 +77,7 @@ namespace gccpp {
         return ptr;
     }
 
-    void Environment::oom_report() {
+    void Environment::oom_report() const {
         std::ostringstream sstr;
         gc->allocator->print(sstr);
         std::fprintf(stderr, "Out of memory:\n%s", sstr.str().c_str());

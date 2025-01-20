@@ -7,6 +7,7 @@ namespace gccpp {
 
     class GarbageCollected {
     public:
+        virtual ~GarbageCollected() = default;
         virtual void trace(GCOperation* operation) noexcept = 0;
     };
 

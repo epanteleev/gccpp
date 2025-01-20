@@ -4,7 +4,6 @@
 #include "gc/containers/ThreadLock.h"
 #include "gc/fwd.h"
 #include "WorkerState.h"
-#include "Memory.h"
 #include "GCTimeRecorder.h"
 #include <atomic>
 
@@ -38,8 +37,8 @@ namespace gccpp {
         Environment operator=(Environment&& env) = delete;
         ~Environment();
     public:
-        template<gccpp::GarbageCollectedType T, typename... Args>
-        static inline gccpp::Oop<T> init_object(gccpp::Oop<T> oop, Args... args) {
+        template<GarbageCollectedType T, typename... Args>
+        static inline Oop<T> init_object(Oop<T> oop, Args... args) {
             new(oop.mw()->object()) T(std::forward<Args>(args)...);
             return oop;
         }
@@ -58,10 +57,10 @@ namespace gccpp {
 
         template<GarbageCollectedType T>
         inline Oop<T> raw_alloc(std::size_t additional_bytes_count, bool need_zeroing = true) {
-            std::size_t size = sizeof(MarkWord) + sizeof(T) + additional_bytes_count;
+            const std::size_t size = sizeof(MarkWord) + sizeof(T) + additional_bytes_count;
             auto *ptr = raw_alloc_helper(size, need_zeroing);
 
-            return Oop<T>(reinterpret_cast<MarkWord *>(ptr));
+            return Oop<T>(static_cast<MarkWord *>(ptr));
         }
 
         template<GarbageCollectedType T, typename... Args>
@@ -79,7 +78,7 @@ namespace gccpp {
         void start_collection();
         void safepoint_slow();
         void* raw_alloc_helper(std::size_t actual_size, bool need_zeroing);
-        void oom_report();
+        void oom_report() const;
 
     public:
         static Environment& init(std::unique_ptr<BasicCollector> gc);

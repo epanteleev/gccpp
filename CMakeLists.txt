@@ -1,15 +1,19 @@
 cmake_minimum_required(VERSION 3.22)
-project(cpp_garbage_collector)
-
-set(CMAKE_CXX_STANDARD 20)
+project(
+        cpp_garbage_collector
+        VERSION 0.0.1
+        DESCRIPTION "Simple garbage collector on C++"
+        LANGUAGES CXX
+)
 
 include_directories(src)
 #set(CMAKE_CXX_FLAGS -DUSE_GCTIME_PROFILER)
-set(CMAKE_CXX_FLAGS_DEBUG "-g -fsanitize=thread -fsanitize=undefined ")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -fsanitize=thread ")
+#set(CMAKE_CXX_FLAGS_DEBUG "-g -fsanitize=address -fsanitize=undefined ")
 set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O3 -Wall -Wextra -Wpedantic -Werror ")
 
 
-add_library(libgc STATIC
+add_library(libgc_libgc STATIC
         src/pointer/Oop.h
         src/pointer/ObjectPointer.h
         src/gc/MarkWord.h
@@ -64,8 +68,40 @@ add_library(libgc STATIC
         src/gc/containers/Page.cpp
         src/gc/containers/Page.h
         src/gc/allocators/details/FixedSizeAllocator.h
-        src/gc/containers/GCTimeRecorder.h src/gc/containers/GCTimeRecorder.h)
+        src/gc/containers/GCTimeRecorder.h src/gc/containers/GCTimeRecorder.h
+)
+add_library(libgc::libgc ALIAS libgc_libgc)
 
+include(GenerateExportHeader)
+generate_export_header(
+        libgc_libgc
+        BASE_NAME libgc
+        EXPORT_FILE_NAME export/libgc/libgc_export.hpp
+)
+
+set_target_properties(
+        libgc_libgc PROPERTIES
+        CXX_VISIBILITY_PRESET hidden
+        VISIBILITY_INLINES_HIDDEN YES
+        VERSION "${PROJECT_VERSION}"
+        SOVERSION "${PROJECT_VERSION_MAJOR}"
+        EXPORT_NAME libgc
+        OUTPUT_NAME libgc
+)
+
+target_include_directories(
+        libgc_libgc ${warning_guard}
+        PUBLIC
+        "\$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
+)
+
+target_include_directories(
+        libgc_libgc SYSTEM
+        PUBLIC
+        "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>"
+)
+
+target_compile_features(libgc_libgc PUBLIC cxx_std_20)
 
 set(DATA_STRUCTURES
     src/struct/String.h
@@ -79,10 +115,10 @@ set(DATA_STRUCTURES
 )
 
 add_executable(count example/count/count.cpp ${DATA_STRUCTURES})
-target_link_libraries(count PRIVATE libgc)
+target_link_libraries(count PRIVATE libgc::libgc)
 
 add_executable(cpp_garbage_collector main.cpp )
-target_link_libraries(cpp_garbage_collector PRIVATE libgc)
+target_link_libraries(cpp_garbage_collector PRIVATE libgc::libgc)
 
 add_subdirectory(tests)
 add_subdirectory(bench)

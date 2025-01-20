@@ -5,7 +5,7 @@
 #include "pointer/Oop.inline.h"
 
 template<gccpp::GarbageCollectedType T>
-class Array : public gccpp::GarbageCollected {
+class Array final : public gccpp::GarbageCollected {
 public:
     explicit Array(std::size_t length):
             len(length) {}
@@ -18,7 +18,8 @@ public:
         return data[idx];
     }
 
-    inline std::size_t length() noexcept {
+    [[nodiscard]]
+    std::size_t length() const noexcept {
         return len;
     }
 
@@ -29,19 +30,19 @@ public:
     }
 
     [[nodiscard]]
-    bool copy_to(gccpp::Oop<Array<T>> other) {
+    bool copy_to(gccpp::Oop<Array> other) {
         if (len > other->length()) {
             return false;
         }
-        void* to_data = other.template content<Array<T>>()->data;
-        auto bytes = len * gccpp::Oop<Array<T>>::sizeOf();
-        std::memcpy(to_data, (void*)data, bytes);
+        void* to_data = other.template content<Array>()->data;
+        auto bytes = len * gccpp::Oop<Array>::sizeOf();
+        std::memcpy(to_data, static_cast<void *>(data), bytes);
         return true;
     }
 public:
     static gccpp::Oop<Array<T>> make(std::size_t length) {
-        auto size_in_bytes = length * gccpp::Oop<Array<T>>::sizeOf();
-        auto array = gccpp::Environment::context().raw_alloc<Array<T>>(size_in_bytes);
+        auto size_in_bytes = length * gccpp::Oop<Array>::sizeOf();
+        auto array = gccpp::Environment::context().raw_alloc<Array>(size_in_bytes);
         gccpp::Environment::init_object(array, length);
         return array;
     }

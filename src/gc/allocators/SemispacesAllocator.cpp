@@ -1,7 +1,6 @@
 #include "SemispacesAllocator.h"
 
 #include <cstdio>
-#include <exception>
 #include <sstream>
 
 namespace gccpp {
