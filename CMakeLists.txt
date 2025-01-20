@@ -6,7 +6,6 @@ project(
         LANGUAGES CXX
 )
 
-include_directories(src)
 #set(CMAKE_CXX_FLAGS -DUSE_GCTIME_PROFILER)
 set(CMAKE_CXX_FLAGS_DEBUG "-g -fsanitize=thread ")
 #set(CMAKE_CXX_FLAGS_DEBUG "-g -fsanitize=address -fsanitize=undefined ")
@@ -92,13 +91,7 @@ set_target_properties(
 target_include_directories(
         libgc_libgc ${warning_guard}
         PUBLIC
-        "\$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
-)
-
-target_include_directories(
-        libgc_libgc SYSTEM
-        PUBLIC
-        "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>"
+        "\$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>"
 )
 
 target_compile_features(libgc_libgc PUBLIC cxx_std_20)

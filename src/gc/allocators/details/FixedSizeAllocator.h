@@ -7,6 +7,7 @@
 #include <sstream>
 #include <functional>
 #include <memory>
+#include <mutex>
 
 namespace gccpp::details {
 
@@ -25,7 +26,7 @@ namespace gccpp::details {
 
         virtual ~Finger() = default;
     public:
-        void* operator()() noexcept {
+        void* operator()() const noexcept {
             return std::assume_aligned<SIZE>(reinterpret_cast<void*>(address)); //Todo investigate impact
         }
 
@@ -126,7 +127,7 @@ namespace gccpp::details {
             return reinterpret_cast<void*>(current_address);
         }
 
-        void print(std::ostringstream &out) {
+        void print(std::ostringstream &out) const {
             out << "Start: " << start_ptr << "\n"
                 << "Max size: " << max_size << "\n"
                 << "Offset: " << offset << "\n"
@@ -139,7 +140,7 @@ namespace gccpp::details {
             return offset / SIZE;
         }
 
-        void visit(const std::function<void(void*)>& fn) noexcept {
+        void visit(const std::function<void(void*)>& fn) const noexcept {
             if (offset == 0) {
                 return;
             }
@@ -150,7 +151,7 @@ namespace gccpp::details {
             } while(current < static_cast<std::byte*>(start_ptr) + offset);
         }
 
-        bool contains(void* object_address) const noexcept {
+        bool contains(const void* object_address) const noexcept {
             const auto end = reinterpret_cast<void*>(reinterpret_cast<std::size_t>(start_ptr) + offset);
             return start_ptr <= object_address && object_address < end;
         }
